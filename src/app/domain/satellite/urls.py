@@ -1,0 +1,5 @@
+TAG_LIST = "/api/satellites"
+TAG_CREATE = "/api/satellites"
+TAG_UPDATE = "/api/satellites/{ground_station_id:uuid}"
+TAG_DELETE = "/api/satellites/{ground_station_id:uuid}"
+TAG_DETAILS = "/api/satellites/{ground_station_id:uuid}"

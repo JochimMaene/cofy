@@ -1,0 +1,5 @@
+TAG_LIST = "/api/ground-stations"
+TAG_CREATE = "/api/ground-stations"
+TAG_UPDATE = "/api/ground-stations/{ground_station_id:uuid}"
+TAG_DELETE = "/api/ground-stations/{ground_station_id:uuid}"
+TAG_DETAILS = "/api/ground-stations/{ground_station_id:uuid}"
