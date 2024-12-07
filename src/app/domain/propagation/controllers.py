@@ -1,18 +1,17 @@
 from godot import cosmos
 from godot.core import ipfwrap
-from litestar import delete, get, post
+from litestar import post
 from litestar.controller import Controller
 from litestar.di import Provide
-from litestar.status_codes import HTTP_202_ACCEPTED
 from litestar_saq.config import TaskQueues
 
-from app.domain.dynamics.dependencies import provide_dynamics_service
-from app.domain.dynamics.models import get_dynamics_config
+from app.domain.accounts.guards import requires_active_user
 from app.domain.dynamics.services import DynamicsService
-from app.domain.propagation.dtos import StateCart
+from app.domain.propagation import urls
+from app.domain.propagation.dtos import PropagationInput, PropagationResult
 from app.domain.satellite.dependencies import provide_satellite_service
 from app.domain.satellite.services import SatelliteService
-from app.lib.godot.trajectory import Trajectory
+from app.lib.fdy import get_dynamics_config
 
 from .dtos import JobRequest, PropagationInput, return_propagation_template
 
@@ -44,19 +43,24 @@ async def propagate_and_save(ctx, *, tra_config: dict, uni_config: dict):
     cosmos.writeIpf(ipf_writer, uni, tra, tra_config["setup"][0]["name"] + "_center", "ICRF", {"Earth": EARTH_ID})
 
 
-class PropagationControllerSimple(Controller):
+class PropagationController(Controller):
     path = "/propagate/"
     dependencies = {
         "satellite_service": Provide(provide_satellite_service),
-        "dynamics_service": Provide(provide_dynamics_service),
+        # "dynamics_service": Provide(provide_dynamics_service),
     }
     tags = ["Propagation"]
 
     @post(
-        status_code=HTTP_202_ACCEPTED,
+        operation_id="CreatePropagationRequest",
+        name="propagate:request",
         summary="Request numerical orbit propagation",
         description="Submit an orbit propagation request using the numerical GODOT orbit propagator.\
               The result will be saved as a .ipf file.",
+        guards=[requires_active_user],
+        path=urls.PROPAGATION_REQUEST,
+        dto=PropagationInput,
+        return_dto=PropagationResult,
     )
     async def create_propagation_request(
         self,
@@ -66,9 +70,9 @@ class PropagationControllerSimple(Controller):
         task_queues: TaskQueues,
     ) -> JobRequest:
         satellite = await satellite_service.get(data.satellite)
-        dynamics = await dynamics_service.get(satellite.dynamics_config)
+        # dynamics = await dynamics_service.get(satellite.dynamics_config)
 
-        uni_config = {**cosmos.util.load_yaml("data/universe_frames.yml"), **get_dynamics_config(dynamics)}
+        uni_config = {**cosmos.util.load_yaml("data/universe_frames.yml"), **get_dynamics_config(satellite.dynamics)}
 
         tra_config = return_propagation_template(data)
         # uni = cosmos.Universe(uni_config)
@@ -82,30 +86,3 @@ class PropagationControllerSimple(Controller):
             uni_config=uni_config,
         )
         return JobRequest(queue_id=job.key, location=f"saq/api/queues/{job.id}")
-
-
-class PropagationControllerFull(Controller):
-    path = "/propagate/godot/requests"
-    tags = ["Propagation"]
-
-    @post(
-        status_code=HTTP_202_ACCEPTED,
-        summary="Request GODOT numerical orbit propagation",
-        description="Submit an orbit propagation request using the numerical GODOT orbit propagator.\
-              The result will be saved as a .ipf file.",
-    )
-    async def create_propagation_request(self, data: Trajectory, task_queues: TaskQueues) -> JobRequest:
-        queue = task_queues.get("computation")
-        job = await queue.enqueue(
-            "propagate_and_save",
-            tra_config=data.model_dump(exclude_none=True, exclude_defaults=True),
-        )
-        return JobRequest(queue_id=job.key, location=f"saq/api/queues/{job.id}")
-
-    @get(path="/{request_id:uuid}/state_vector")
-    async def get_propagation_state_vector(self, request_id: UUID4) -> StateCart:
-        pass
-
-    @delete(path="/{order_id:uuid}")
-    async def delete_propagation(self, request_id: UUID4) -> None:
-        pass

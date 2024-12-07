@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Optional
+
+from pydantic import UUID4, BaseModel, Field
 
 from app.domain.satellite.models import Satellite
-from pydantic import UUID4, BaseModel, Field
 
 
 class TLE_Gen(BaseModel):
@@ -10,9 +10,9 @@ class TLE_Gen(BaseModel):
     orbit: UUID4
     begin: datetime = Field(description="Begin epoch")
     end: datetime = Field(description="End epoch")
-    step: Optional[str] = Field("1d", description="Generate TLEs with this step")
-    manoeuvre_file: Optional[str]
-    bstar_fit: Optional[bool] = Field(False,description="Flag to use B-star fitting.")
+    step: str | None = Field("1d", description="Generate TLEs with this step")
+    manoeuvre_file: str | None
+    bstar_fit: bool | None = Field(False,description="Flag to use B-star fitting.")
     output_file_path: str = Field(description="Output file path for the TLEs")
 
 def generate_input(tle_gen: TLE_Gen, satellite: Satellite):
@@ -36,5 +36,5 @@ def generate_input(tle_gen: TLE_Gen, satellite: Satellite):
             "pieceOfLaunch": tle_config.piece_of_launch,
             "orbitNumbersFile":None,
         },
-        "outputFile": tle_gen.output_file_path
+        "outputFile": tle_gen.output_file_path,
     }

@@ -1,7 +1,4 @@
 # pylint: disable=[invalid-name,import-outside-toplevel]
-# SPDX-FileCopyrightText: 2023-present Cody Fincher <cody.fincher@gmail.com>
-#
-# SPDX-License-Identifier: MIT
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

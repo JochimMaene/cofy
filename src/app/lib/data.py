@@ -23,7 +23,7 @@ def download_JPL_ephemeris(response, file_name: str) -> None:
         file.write(response.content)
 
 
-def space_weather_ipf_from_cssi(input_csv: str | BytesIO, output_file: str):
+def space_weather_ipf_from_cssi(input_csv: str | BytesIO, output_file: str) -> None:
     """Write a space weather ipf file from cssi space weather data.
     The space weather ipf file is needed by GODOT to use the NRLMSISE-00 atmospheric model.
     However, GODOT provides no functionality to produce these files. This function takes the space
@@ -37,17 +37,17 @@ def space_weather_ipf_from_cssi(input_csv: str | BytesIO, output_file: str):
     output_file : str
         the file and path where the ipf file shall be sorted, e.g. /data/space_weather.ipf
 
-    Notes
+    Notes:
     -----
     The daily f10.7 and averaged, centered f10.7 values take the observed and not the adjusted
     values as expected by the NRLMSISE-00 model. [2]_
 
-    References
+    References:
     ----------
     .. [1] https://celestrak.org/SpaceData/
     .. [2] https://forum.orekit.org/t/cssispaceweatherdata-java-using-adjusted-and-not-observed-flux-values/1290
 
-    See also
+    See Also:
     --------
     space_weather_ipf_from_msfc
     """
@@ -61,7 +61,7 @@ def space_weather_ipf_from_cssi(input_csv: str | BytesIO, output_file: str):
     del writer
 
 
-def erp_ipf_from_iers(input_file: str | BytesIO, output_file: str):
+def erp_ipf_from_iers(input_file: str | BytesIO, output_file: str) -> None:
     """Write an ERP correction ipf file from IERS IAU2000 data [1]_. The data must be given as a
     csv file. The latest csv can be directly download using the link below [2]_. Without the ERP
     file, GODOT uses an approximate method such that the Earth orientation is valid within about
@@ -74,12 +74,12 @@ def erp_ipf_from_iers(input_file: str | BytesIO, output_file: str):
     output_file : str
         the file and path where the ipf file shall be sorted
 
-    References
+    References:
     ----------
     .. [1] https://www.iers.org/IERS/EN/DataProducts/EarthOrientationData/eop.html
     .. [2] https://datacenter.iers.org/data/csv/finals2000A.data.csv
 
-    Note
+    Note:
     ----
     This function uses with the Bulletain A and Bulletin B data. Whenever, Bulletin B data (= the
     standard solution) is available, this is used. Bulletin A data is used otherwise, providing

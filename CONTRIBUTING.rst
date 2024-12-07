@@ -18,7 +18,7 @@ Code contributions
 Workflow
 ++++++++
 
-1. `Fork <https://github.com/litestar-org/litestar-fullstack/fork>`_ the `fullstack repository <https://github.com/litestar-org/litestar-fullstack>`_
+1. `Fork <https://github.com/JochimMaene/cofy/fork>`_ the `repository <https://github.com/JochimMaene/cofy>`_
 2. Clone your fork locally with git
 3. `Set up the environment <#setting-up-the-environment>`_
 4. Make your changes

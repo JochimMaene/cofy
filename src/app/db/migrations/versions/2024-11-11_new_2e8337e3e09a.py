@@ -2,7 +2,7 @@
 """new
 
 Revision ID: 2e8337e3e09a
-Revises: 
+Revises:
 Create Date: 2024-11-11 15:23:12.140156+00:00
 
 """

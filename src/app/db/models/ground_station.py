@@ -22,7 +22,3 @@ class GroundStation(UUIDAuditBase):
     latitude: Mapped[float]
     altitude: Mapped[float]
     elevation_mask: Mapped[list[ElevationMaskPoint]] = mapped_column(JSONB)
-    # elevation_mask_id: Mapped[UUID] = Column(ForeignKey("elevation_mask_point.id"))
-    # elevation_mask: Mapped[list[ElevationMaskPoint]] = relationship(
-    #     back_populates="ground_station"
-    # )

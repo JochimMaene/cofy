@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -9,7 +9,7 @@ class Parameter(BaseModel):
                             It is possible to provide several partial names separated by a '/' (eg pos_x/pos_y)\
                             The use of '/' allows to specify groups of parameters, while controlling their order.\
                             The provided expression may match zero, one or several parameters.")
-    weight: Optional[str] = Field(description="Weight of the parameter, including units\
+    weight: str | None = Field(description="Weight of the parameter, including units\
                             When specifying weight, all matched parameters must have the same unit.")
     consider: bool = Field(False,description="Flag to set parameter as consider")
     covariance: list[list[str]] = Field(description="Covariance matrix. Allows to specify a possibly non-diagonal apriori\
@@ -51,4 +51,3 @@ class OD(BaseModel):
     settings: ODSettings
 
     initial_trajectory: str
-

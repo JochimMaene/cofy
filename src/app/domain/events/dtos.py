@@ -1,6 +1,6 @@
-from typing import Optional
-from pydantic import BaseModel, UUID4
 from datetime import datetime
+
+from pydantic import UUID4, BaseModel
 
 
 class GroundStationPass(BaseModel):
@@ -8,7 +8,7 @@ class GroundStationPass(BaseModel):
     ground_station: UUID4
     start: datetime
     end: datetime
-    orbit_id: Optional[UUID4] = None
+    orbit_id: UUID4 | None = None
 
 
 class NodeCrossing(BaseModel):
@@ -16,4 +16,4 @@ class NodeCrossing(BaseModel):
     ground_station: UUID4
     start: datetime
     end: datetime
-    orbit_id: Optional[UUID4] = None
+    orbit_id: UUID4 | None = None

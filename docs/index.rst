@@ -42,6 +42,10 @@ Reference
 
 We also provide an API reference which can be found at :doc:`api/index`.
 
+
+.. toctree::
+    :hidden:
+
 .. toctree::
     :titlesonly:
     :caption: Documentation
@@ -49,6 +53,7 @@ We also provide an API reference which can be found at :doc:`api/index`.
 
     usage/index
     api/index
+    design/index
 
 .. toctree::
     :titlesonly:

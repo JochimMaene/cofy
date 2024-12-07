@@ -1,29 +1,30 @@
-<img src="docs/source/_static/images/logo_full.jpg" >
+<img src="docs/_static/logo_full.jpg" >
 
 # Cofy
 
-Cofy (Configurable/Cloud-deployable Orbit Flight dYnamics) is a hobby project to build a suit of cloud-based services for operational space flight dynamics. 
+Cofy (Configurable/Cloud-deployable Orbit Flight dYnamics) is a hobby project to build a suit of cloud-based services for operational space flight dynamics.
 
 Functionality is limited currently. The idea is to extend cofy using multiple modules in the future, such as:
 
-* Latte: (Lightweight ATTitude Extension)
-* Mocha: (Maneuvers and Orbital Corrections for High-precision Adjustments): station keeping in LEO .
-* Mug:  (Maneuver Utility for Geostationary orbits)
-* Espresso: Exta Set of Particular Routines for Earth Sun-Synchronous Orbits
-* Brew: (Batch REaltime Worflows) automation tool for cofy
+- Latte: (Lightweight ATTitude Extension)
+- Mocha: (Maneuvers and Orbital Corrections for High-precision Adjustments): station keeping in LEO .
+- Mug: (Maneuver Utility for Geostationary orbits)
+- Espresso: Exta Set of Particular Routines for Earth Sun-Synchronous Orbits
+- Brew: (Batch REaltime Worflows) automation tool for cofy
 
 # Features
 
-* [x] Numerical orbit propagation, powered by GODOT
-* [ ] Orbit determination using position and velocity data
-* [x] Asynchronous calls and queue handling
-* [ ] Spacecraft and ground station configuration management using a relational database
-* [ ] Orbit file storage on the cloud and orbit file management
-* [ ] Ground station pass calculations
-* [ ] Utilities for time scale conversion and state vector conversion
-* [ ] TLE fitting and propagation
+- [x] Numerical orbit propagation, powered by GODOT
+- [ ] Orbit determination using position and velocity data
+- [x] Asynchronous calls and queue handling
+- [ ] Spacecraft and ground station configuration management using a relational database
+- [ ] Orbit file storage on the cloud and orbit file management
+- [ ] Ground station pass calculations
+- [ ] Utilities for time scale conversion and state vector conversion
+- [ ] TLE fitting and propagation
 
 ## Quick Start
+
 Cofy only supports the Linux OS, as it is required to use GODOT. To quickly get a development environment running, first set the local environment variables.
 
 ```bash

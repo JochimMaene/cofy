@@ -1,4 +1,5 @@
 """Sphinx configuration."""
+
 from __future__ import annotations
 
 import importlib.metadata
@@ -17,8 +18,8 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)  # RemovedInSphin
 
 # -- Project information -----------------------------------------------------
 project = importlib.metadata.metadata("app")["Name"]
-copyright = "2023, Litestar Organization"
-author = "Cody Fincher"
+copyright = "2024, Jochim Maene"
+author = "Jochim Maene"
 release = importlib.metadata.version("app")
 
 # -- General configuration ---------------------------------------------------
@@ -80,17 +81,17 @@ html_static_path = ["_static"]
 html_show_sourcelink = True
 html_title = "Litestar Fullstack Docs"
 html_context = {
-    "github_user": "litestar-org",
-    "github_repo": "litestar-fullstack",
+    "github_user": "JochimMaene",
+    "github_repo": "cofy",
     "github_version": "main",
     "doc_path": "docs",
 }
 html_theme_options = {
     "use_page_nav": False,
     "use_edit_page_button": True,
-    "github_repo_name": "litestar-fullstack",
+    "github_repo_name": "cofy",
     "logo": {
-        "link": "https://docs.fullstack.litestar.dev",
+        "link": "https://github.com/JochimMaene/cofy",
     },
     "extra_navbar_items": {
         "Documentation": "index",
