@@ -47,7 +47,7 @@ class Aocs(CamelizedBaseStruct):
 
 
 class Satellite(UUIDAuditBase):
-    # __tablename__ = "satellites"
+    __tablename__ = "satellite"
     name: Mapped[str] = mapped_column(index=True)
     group: Mapped[str] = mapped_column(index=True, nullable=True)
     dry_mass: Mapped[float]
@@ -57,8 +57,6 @@ class Satellite(UUIDAuditBase):
     srp_coefficient: Mapped[float] = mapped_column(
         doc="test",
     )
-    # tle_config_id: Mapped[UUID] = Column(ForeignKey("tle_config.id"),info=dto_field("private"))
-    # tle_config: Mapped[TleConfig] = relationship("TleConfig")
     tle_config: Mapped[TleConfig] = mapped_column(
         JSONB,
         doc="test",
@@ -66,16 +64,12 @@ class Satellite(UUIDAuditBase):
     propulsion: Mapped[PropulsionSystem] = mapped_column(JSONB)
     aocs: Mapped[Aocs] = mapped_column(JSONB)
     gnss: Mapped[GnssSensor] = mapped_column(JSONB)
-    # dynamics_config: Mapped[str]
-    # main_orbit_id: Mapped[UUID] = mapped_column(nullable=True)
 
     dynamics_id: Mapped[UUID] = mapped_column(ForeignKey("dynamics.id", ondelete="cascade"))
-    # main_orbit_id: Mapped[UUID] = mapped_column(ForeignKey("orbit.id", ondelete="cascade"))
     # # -----------
     # # ORM Relationships
     # # ------------
 
-    # relationship()
     orbits: Mapped[list[Orbit]] = relationship(
         back_populates="satellite",
         lazy="noload",
@@ -83,16 +77,9 @@ class Satellite(UUIDAuditBase):
         viewonly=True,
     )
 
-    # main_orbit: Mapped[Orbit] = relationship(
-    #     back_populates="satellite",
-    #     innerjoin=True,
-    #     uselist=False,
-    #     # lazy="noload",
-    # )
-
     dynamics: Mapped[Dynamics] = relationship(
         back_populates="satellites",
         innerjoin=True,
         uselist=False,
-        # lazy="noload",
+        lazy="selectin",
     )

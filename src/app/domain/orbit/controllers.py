@@ -36,7 +36,7 @@ class OrbitController(Controller):
         name="orbit:list",
         summary="List Orbit",
         description="Retrieve the orbit.",
-        path=urls.TAG_LIST,
+        path=urls.ORBIT_LIST,
     )
     async def list_orbit(
         self,
@@ -50,7 +50,7 @@ class OrbitController(Controller):
     @get(
         operation_id="GetOrbit",
         name="orbit:get",
-        path=urls.TAG_DETAILS,
+        path=urls.ORBIT_DETAILS,
         summary="Retrieve the details of a orbit.",
     )
     async def get_orbit(
@@ -75,7 +75,7 @@ class OrbitController(Controller):
         cache_control=None,
         description="A orbit is a place where you can upload and group collections of databases.",
         guards=[requires_superuser],
-        path=urls.TAG_CREATE,
+        path=urls.ORBIT_CREATE,
         dto=OrbitCreateDTO,
     )
     async def create_orbit(
@@ -90,7 +90,7 @@ class OrbitController(Controller):
     @patch(
         operation_id="UpdateOrbit",
         name="orbit:update",
-        path=urls.TAG_UPDATE,
+        path=urls.ORBIT_UPDATE,
         guards=[requires_superuser],
         dto=OrbitUpdateDTO,
     )
@@ -113,7 +113,7 @@ class OrbitController(Controller):
     @delete(
         operation_id="DeleteOrbit",
         name="orbit:delete",
-        path=urls.TAG_DELETE,
+        path=urls.ORBIT_DELETE,
         summary="Remove Orbit",
         description="Removes a orbit and its associations",
         guards=[requires_superuser],

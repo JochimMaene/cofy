@@ -235,6 +235,7 @@ lint.ignore = [
   "FBT",
   "PLR0913", # too many arguments
   "PT",
+  "TCH003", # Move into a type-checking block
   "TD",
   "PERF203", # ignore for now; investigate
 ]

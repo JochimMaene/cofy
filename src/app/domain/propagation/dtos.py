@@ -6,7 +6,7 @@ from msgspec import Meta
 from app.lib.schema import CamelizedBaseStruct
 
 
-class StateCart(CamelizedBaseStruct):
+class StateCart(CamelizedBaseStruct, tag=True):
     pos_x: Annotated[str, Meta(description="Position vector X component.", examples=["150.5 km"])]
     pos_y: Annotated[str, Meta(description="Position vector Y component.", examples=["150.5 km"])]
     pos_z: Annotated[str, Meta(description="Position vector Z component.", examples=["150.5 km"])]
@@ -15,7 +15,7 @@ class StateCart(CamelizedBaseStruct):
     vel_z: Annotated[str, Meta(description="Velocity vector Z component.", examples=["3.6 km/s", "514 m/s"])]
 
 
-class StateKep(CamelizedBaseStruct):
+class StateKep(CamelizedBaseStruct, tag=True):
     sma: Annotated[str, Meta(description="Semi-major axis", examples=["42165 km"])]
     ecc: Annotated[float, Meta(description="Eccentricity", examples=["0.01"])]
     inc: Annotated[str, Meta(description="Inclination", examples=["70 deg"])]
@@ -24,7 +24,7 @@ class StateKep(CamelizedBaseStruct):
     tan: Annotated[str, Meta(description="True anomaly", examples=["-37.3 deg"])]
 
 
-class StateCirc(CamelizedBaseStruct):
+class StateCirc(CamelizedBaseStruct, tag=True):
     sma: Annotated[str, Meta(description="Semi-major axis.", examples=["7500 km"])]
     ecx: float
     ecy: float
@@ -40,12 +40,7 @@ class JobRequest(CamelizedBaseStruct):
 
 class PropagationInput(CamelizedBaseStruct):
     satellite: UUID
-    initial_orbit: Annotated[
-        StateKep | StateCirc | StateCart,
-        Meta(
-            description="The initial orbit state used for propagation. All values are assumed to be in the ICRF frame.",
-        ),
-    ]
+    initial_orbit: StateKep
     initial_mass: float
     epoch_start: str
     epoch_end: str

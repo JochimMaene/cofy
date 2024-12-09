@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime  # noqa: TCH003
-from uuid import UUID  # noqa: TCH003
+from datetime import datetime
+from uuid import UUID
 
 import msgspec
 

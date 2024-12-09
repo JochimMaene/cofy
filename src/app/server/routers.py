@@ -8,6 +8,7 @@ from app.domain.accounts.controllers import AccessController, UserController, Us
 from app.domain.data.controllers import DataStatusController
 from app.domain.dynamics.controllers import DynamicsController
 from app.domain.ground_station.controllers import GroundStationController
+from app.domain.propagation.controllers import PropagationController
 from app.domain.satellite.controllers import SatelliteController
 from app.domain.system.controllers import SystemController
 from app.domain.tags.controllers import TagController
@@ -32,4 +33,5 @@ route_handlers: list[ControllerRouterHandler] = [
     GroundStationController,
     SatelliteController,
     DynamicsController,
+    PropagationController,
 ]

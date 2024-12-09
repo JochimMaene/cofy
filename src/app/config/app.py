@@ -65,6 +65,10 @@ saq = SAQConfig(
                 ),
             ],
         ),
+        QueueConfig(
+            name="Orbit propagation queue",
+            tasks=["app.domain.propagation.controllers.propagate_and_save"],
+        ),
     ],
 )
 

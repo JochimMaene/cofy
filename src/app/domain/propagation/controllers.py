@@ -3,28 +3,26 @@ from godot.core import ipfwrap
 from litestar import post
 from litestar.controller import Controller
 from litestar.di import Provide
+from litestar.dto import MsgspecDTO
 from litestar_saq.config import TaskQueues
 
 from app.domain.accounts.guards import requires_active_user
-from app.domain.dynamics.services import DynamicsService
 from app.domain.propagation import urls
-from app.domain.propagation.dtos import PropagationInput, PropagationResult
+from app.domain.propagation.dtos import JobRequest, PropagationInput, PropagationResult, return_propagation_template
 from app.domain.satellite.dependencies import provide_satellite_service
 from app.domain.satellite.services import SatelliteService
 from app.lib.fdy import get_dynamics_config
-
-from .dtos import JobRequest, PropagationInput, return_propagation_template
+from app.lib.universe_assembler import uni as uni_basic
 
 
 # simple file data store for now
-async def propagate_and_save(ctx, *, tra_config: dict, uni_config: dict):
-    if uni_config is None:
-        uni = cosmos.Universe(cosmos.util.load_yaml("data/universe.yml"))
-    else:
-        uni = cosmos.Universe(uni_config)
-
+async def propagate_and_save(ctx, *, tra_config: dict, uni_config: dict) -> None:
+    uni = cosmos.Universe(uni_config)
+    print(uni)
     tra = cosmos.Trajectory(uni, tra_config)
+    print(tra)
     tra.compute(False)
+    print("a")
 
     # with tempfile.NamedTemporaryFile() as f:
     # id of the Earth as center of the ephemerides, according to the IMSORB body identification scheme
@@ -47,7 +45,6 @@ class PropagationController(Controller):
     path = "/propagate/"
     dependencies = {
         "satellite_service": Provide(provide_satellite_service),
-        # "dynamics_service": Provide(provide_dynamics_service),
     }
     tags = ["Propagation"]
 
@@ -59,27 +56,22 @@ class PropagationController(Controller):
               The result will be saved as a .ipf file.",
         guards=[requires_active_user],
         path=urls.PROPAGATION_REQUEST,
-        dto=PropagationInput,
-        return_dto=PropagationResult,
+        dto=MsgspecDTO[PropagationInput],
+        return_dto=MsgspecDTO[PropagationResult],
     )
     async def create_propagation_request(
         self,
         satellite_service: SatelliteService,
-        dynamics_service: DynamicsService,
         data: PropagationInput,
         task_queues: TaskQueues,
     ) -> JobRequest:
         satellite = await satellite_service.get(data.satellite)
-        # dynamics = await dynamics_service.get(satellite.dynamics_config)
 
-        uni_config = {**cosmos.util.load_yaml("data/universe_frames.yml"), **get_dynamics_config(satellite.dynamics)}
+        uni_config = uni_basic | get_dynamics_config(satellite.dynamics, satellite)
 
         tra_config = return_propagation_template(data)
-        # uni = cosmos.Universe(uni_config)
-        # if data.dynamics is None:
-        # data.dynamics = sat
 
-        queue = task_queues.get("computation")
+        queue = task_queues.get("Orbit propagation queue")
         job = await queue.enqueue(
             "propagate_and_save",
             tra_config=tra_config,

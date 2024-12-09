@@ -28,6 +28,8 @@ jobs:
 
       - name: Install dependencies
         run: pdm install -G:all
+        env:
+          SPACE_CODEV_AUTH_TOKEN: ${{ secrets.SPACE_CODEV_AUTH_TOKEN }}
 
       - name: Fetch gh pages
         run: git fetch origin gh-pages --depth=1

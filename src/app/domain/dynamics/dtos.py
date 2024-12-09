@@ -7,12 +7,12 @@ __all__ = ["DynamicsCreateDTO", "DynamicsDTO", "DynamicsUpdateDTO"]
 
 
 class DynamicsDTO(SQLAlchemyDTO[Dynamics]):
-    config = dto.config(exclude={"created_at", "updated_at"})
+    config = dto.config(exclude={"created_at", "updated_at", "satellites"})
 
 
 class DynamicsCreateDTO(SQLAlchemyDTO[Dynamics]):
-    config = dto.config(exclude={"id", "created_at", "updated_at"})
+    config = dto.config(exclude={"id", "created_at", "updated_at", "satellites"})
 
 
 class DynamicsUpdateDTO(SQLAlchemyDTO[Dynamics]):
-    config = dto.config(exclude={"id", "created_at", "updated_at"}, partial=True)
+    config = dto.config(exclude={"id", "created_at", "updated_at", "satellites"}, partial=True)

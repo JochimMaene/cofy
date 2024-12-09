@@ -1,7 +1,4 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from app.db.models import Dynamics, Satellite
+from app.db.models import Dynamics, Satellite
 
 
 def add_satellite_dynamics_to_config(uni_config: dict, dynamics: Dynamics, satellite: Satellite) -> None:
@@ -17,7 +14,7 @@ def add_satellite_dynamics_to_config(uni_config: dict, dynamics: Dynamics, satel
     )
 
 
-def get_dynamics_config(dynamics: Dynamics) -> dict:
+def get_dynamics_config(dynamics: Dynamics, satellite: Satellite) -> dict:
     dynamics_config = {
         "bodies": [
             {
@@ -52,11 +49,16 @@ def get_dynamics_config(dynamics: Dynamics) -> dict:
         ],
         "dynamics": [
             {"name": "gravity", "type": "SystemGravity", "config": {"model": "EarthCenter"}},
-            # {
-            #     "name": "srp",
-            #     "type": "SimpleSRP",
-            #     "config": {"occulters": ["Earth"], "mass": "satellite_mass", "area": "srp_area", "cr": "srp_cr"},
-            # },
+            {
+                "name": "srp",
+                "type": "SimpleSRP",
+                "config": {
+                    "occulters": ["Earth"],
+                    "mass": 100,
+                    "area": satellite.srp_area,
+                    "cr": satellite.srp_coefficient,
+                },
+            },
             {"name": "combined", "type": "Combined", "config": ["gravity"]},
         ],
     }

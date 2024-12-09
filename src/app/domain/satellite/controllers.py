@@ -36,7 +36,7 @@ class SatelliteController(Controller):
         name="satellite:list",
         summary="List Satellite",
         description="Retrieve the satellite.",
-        path=urls.TAG_LIST,
+        path=urls.SATELLITE_LIST,
     )
     async def list_satellite(
         self,
@@ -50,7 +50,7 @@ class SatelliteController(Controller):
     @get(
         operation_id="GetSatellite",
         name="satellite:get",
-        path=urls.TAG_DETAILS,
+        path=urls.SATELLITE_DETAILS,
         summary="Retrieve the details of a satellite.",
     )
     async def get_satellite(
@@ -75,7 +75,7 @@ class SatelliteController(Controller):
         cache_control=None,
         description="A satellite is a place where you can upload and group collections of databases.",
         guards=[requires_superuser],
-        path=urls.TAG_CREATE,
+        path=urls.SATELLITE_CREATE,
         dto=SatelliteCreateDTO,
     )
     async def create_satellite(
@@ -90,7 +90,7 @@ class SatelliteController(Controller):
     @patch(
         operation_id="UpdateSatellite",
         name="satellite:update",
-        path=urls.TAG_UPDATE,
+        path=urls.SATELLITE_UPDATE,
         guards=[requires_superuser],
         dto=SatelliteUpdateDTO,
     )
@@ -113,7 +113,7 @@ class SatelliteController(Controller):
     @delete(
         operation_id="DeleteSatellite",
         name="satellite:delete",
-        path=urls.TAG_DELETE,
+        path=urls.SATELLITE_DELETE,
         summary="Remove Satellite",
         description="Removes a satellite and its associations",
         guards=[requires_superuser],
