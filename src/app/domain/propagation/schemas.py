@@ -6,7 +6,7 @@ from msgspec import Meta
 from app.lib.schema import CamelizedBaseStruct
 
 
-class StateCart(CamelizedBaseStruct, tag=True):
+class StateCart(CamelizedBaseStruct, tag="state-cart"):
     pos_x: Annotated[str, Meta(description="Position vector X component.", examples=["150.5 km"])]
     pos_y: Annotated[str, Meta(description="Position vector Y component.", examples=["150.5 km"])]
     pos_z: Annotated[str, Meta(description="Position vector Z component.", examples=["150.5 km"])]
@@ -15,7 +15,7 @@ class StateCart(CamelizedBaseStruct, tag=True):
     vel_z: Annotated[str, Meta(description="Velocity vector Z component.", examples=["3.6 km/s", "514 m/s"])]
 
 
-class StateKep(CamelizedBaseStruct, tag=True):
+class StateKep(CamelizedBaseStruct, tag="state-kep"):
     sma: Annotated[str, Meta(description="Semi-major axis", examples=["42165 km"])]
     ecc: Annotated[float, Meta(description="Eccentricity", examples=["0.01"])]
     inc: Annotated[str, Meta(description="Inclination", examples=["70 deg"])]
@@ -24,13 +24,16 @@ class StateKep(CamelizedBaseStruct, tag=True):
     tan: Annotated[str, Meta(description="True anomaly", examples=["-37.3 deg"])]
 
 
-class StateCirc(CamelizedBaseStruct, tag=True):
+class StateCirc(CamelizedBaseStruct, tag="state-circ"):
     sma: Annotated[str, Meta(description="Semi-major axis.", examples=["7500 km"])]
     ecx: float
     ecy: float
     inc: str
     ran: str
     aol: str
+
+
+UnionType = StateKep
 
 
 class JobRequest(CamelizedBaseStruct):
@@ -40,7 +43,7 @@ class JobRequest(CamelizedBaseStruct):
 
 class PropagationInput(CamelizedBaseStruct):
     satellite: UUID
-    initial_orbit: StateKep
+    initial_orbit: UnionType
     initial_mass: float
     epoch_start: str
     epoch_end: str

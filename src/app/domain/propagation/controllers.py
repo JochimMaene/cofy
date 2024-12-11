@@ -8,7 +8,7 @@ from litestar_saq.config import TaskQueues
 
 from app.domain.accounts.guards import requires_active_user
 from app.domain.propagation import urls
-from app.domain.propagation.dtos import JobRequest, PropagationInput, PropagationResult, return_propagation_template
+from app.domain.propagation.schemas import JobRequest, PropagationInput, PropagationResult, return_propagation_template
 from app.domain.satellite.dependencies import provide_satellite_service
 from app.domain.satellite.services import SatelliteService
 from app.lib.fdy import get_dynamics_config
@@ -18,11 +18,8 @@ from app.lib.universe_assembler import uni as uni_basic
 # simple file data store for now
 async def propagate_and_save(ctx, *, tra_config: dict, uni_config: dict) -> None:
     uni = cosmos.Universe(uni_config)
-    print(uni)
     tra = cosmos.Trajectory(uni, tra_config)
-    print(tra)
     tra.compute(False)
-    print("a")
 
     # with tempfile.NamedTemporaryFile() as f:
     # id of the Earth as center of the ephemerides, according to the IMSORB body identification scheme

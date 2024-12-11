@@ -36,7 +36,7 @@ class DynamicsController(Controller):
         name="dynamics:list",
         summary="List Dynamics",
         description="Retrieve the dynamics.",
-        path=urls.TAG_LIST,
+        path=urls.DYNAMICS_LIST,
     )
     async def list_dynamics(
         self,
@@ -50,7 +50,7 @@ class DynamicsController(Controller):
     @get(
         operation_id="GetDynamics",
         name="dynamics:get",
-        path=urls.TAG_DETAILS,
+        path=urls.DYNAMICS_DETAILS,
         summary="Retrieve the details of a dynamics.",
     )
     async def get_dynamics(
@@ -75,7 +75,7 @@ class DynamicsController(Controller):
         cache_control=None,
         description="A dynamics is a place where you can upload and group collections of databases.",
         guards=[requires_superuser],
-        path=urls.TAG_CREATE,
+        path=urls.DYNAMICS_CREATE,
         dto=DynamicsCreateDTO,
     )
     async def create_dynamics(
@@ -90,7 +90,7 @@ class DynamicsController(Controller):
     @patch(
         operation_id="UpdateDynamics",
         name="dynamics:update",
-        path=urls.TAG_UPDATE,
+        path=urls.DYNAMICS_UPDATE,
         guards=[requires_superuser],
         dto=DynamicsUpdateDTO,
     )
@@ -113,7 +113,7 @@ class DynamicsController(Controller):
     @delete(
         operation_id="DeleteDynamics",
         name="dynamics:delete",
-        path=urls.TAG_DELETE,
+        path=urls.DYNAMICS_DELETE,
         summary="Remove Dynamics",
         description="Removes a dynamics and its associations",
         guards=[requires_superuser],

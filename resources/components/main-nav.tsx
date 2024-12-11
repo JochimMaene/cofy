@@ -23,13 +23,13 @@ export function MainNav({
         Customers
       </Link>
       <Link
-        to="/examples/dashboard"
+        to="/dynamics"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
       >
-        Products
+        Dynamics
       </Link>
       <Link
-        to="/examples/dashboard"
+        to="/dynamics"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
       >
         Settings
