@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DynamicsList from "@/components/DynamicsList";
+import DynamicsList from "./components/dynamics-list";
 import MainLayout from "@/layouts/MainLayout";
 
 const DynamicsPage: React.FC = () => {

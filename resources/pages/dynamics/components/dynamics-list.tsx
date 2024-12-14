@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dynamics, PaginationResponse } from "@/types/dynamics";
+import { Dynamics } from "@/types/dynamics";
 import {
     Table,
     TableHeader,
@@ -18,7 +18,8 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import DynamicsForm from "@/components/DynamicsForm";
+import DynamicsForm from "./dynamics-form";
+import { fetchDynamics, deleteDynamics } from "@/services/dynamics";
 
 
 interface DynamicsListProps {
@@ -29,37 +30,25 @@ interface DynamicsListProps {
 const DynamicsList: React.FC<DynamicsListProps> = ({ refresh, onRefresh }) => {
     const [dynamics, setDynamics] = useState<Dynamics[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
     const [editingDynamics, setEditingDynamics] = useState<Dynamics | null>(null);
     const [deleteId, setDeleteId] = useState<string | null>(null);
     useEffect(() => {
-        const fetchDynamics = async () => {
+        const loadDynamics = async () => {
             setLoading(true);
-            setError(null);
             try {
-                const response = await fetch("/api/dynamics");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch dynamics.");
-                }
-                const data: PaginationResponse<Dynamics> = await response.json();
-                setDynamics(data.items || []);
-            } catch (err) {
-                console.error("Error fetching dynamics:", err);
-                setError(err instanceof Error ? err.message : "An unknown error occurred.");
+                const data = await fetchDynamics();
+                setDynamics(data.items);
+            } catch (error) {
+                toast.error("Failed to load dynamics.");
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchDynamics();
+        loadDynamics();
     }, [refresh]);
 
     if (loading) {
         return <div>Loading dynamics...</div>;
-    }
-
-    if (error) {
-        return <div className="text-red-500">Error: {error}</div>;
     }
 
     if (dynamics.length === 0) {
@@ -76,18 +65,12 @@ const DynamicsList: React.FC<DynamicsListProps> = ({ refresh, onRefresh }) => {
 
     const handleDelete = async (id: string) => {
         try {
-            const response = await fetch(`/api/dynamics/${id}`, { method: "DELETE" });
-            if (response.ok) {
-                toast.success("Dynamics deleted successfully!");
-                onRefresh(); // Refresh the list
-            } else {
-                toast.error("Error deleting dynamics.");
-            }
-        } catch (err) {
-            console.error("Error:", err);
-            toast.error("An unexpected error occurred.");
-        } finally {
-            setDeleteId(null); // Close the dialog
+            await deleteDynamics(id);
+            toast.success("Dynamics deleted successfully.");
+            onRefresh();
+            setDeleteId(null);
+        } catch {
+            toast.error("Failed to delete dynamics.");
         }
     };
 
@@ -109,7 +92,7 @@ const DynamicsList: React.FC<DynamicsListProps> = ({ refresh, onRefresh }) => {
                         </DialogTitle>
                     </DialogHeader>
                     <DynamicsForm
-                        initialData={editingDynamics}
+                        initialData={editingDynamics ?? undefined}
                         onRefresh={onRefresh}
                         onClose={() => setEditingDynamics(null)} // Close the dialog
                     />

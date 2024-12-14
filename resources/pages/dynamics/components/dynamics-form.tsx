@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dynamics } from "@/types/dynamics";
+import { createOrUpdateDynamics } from "@/services/dynamics";
 
 interface DynamicsFormProps {
     initialData?: Dynamics; // Optional for updates
@@ -50,35 +51,19 @@ const DynamicsForm: React.FC<DynamicsFormProps> = ({
     });
 
     const onSubmit: SubmitHandler<DynamicsFormValues> = async (data) => {
-        const url = initialData
-            ? `/api/dynamics/${initialData.id}` // Update if `initialData` exists
-            : "/api/dynamics"; // Create otherwise
-        const method = initialData ? "PATCH" : "POST";
-
+        const dynamicsData: Dynamics = {
+            ...data,
+            id: initialData?.id || "", // Include `id` if editing
+        };
         try {
-            const response = await fetch(url, {
-                method,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-
-            if (response.ok) {
-                toast.success(initialData ? "Dynamics updated successfully!" : "Dynamics created successfully!", {
-                    action: {
-                        label: "View Details",
-                        onClick: () => {
-                            console.log("Action clicked");
-                            // Add logic to navigate to details if needed
-                        },
-                    },
-                });
-                onRefresh();
-                onClose();
-            } else {
-                toast.error("Error saving dynamics. Please try again.");
-            }
-        } catch (err) {
-            console.error("Error:", err);
+            await createOrUpdateDynamics(dynamicsData);
+            toast.success(
+                initialData ? "Dynamics updated successfully!" : "Dynamics created successfully!"
+            );
+            onRefresh(); // Trigger parent refresh
+            onClose();   // Close dialog
+        } catch (error) {
+            toast.error("Error saving dynamics. Please try again.");
         }
     };
 
