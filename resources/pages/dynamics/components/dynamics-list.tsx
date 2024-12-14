@@ -150,7 +150,7 @@ const DynamicsList: React.FC<DynamicsListProps> = ({ refresh, onRefresh }) => {
                                                 size="sm"
                                                 onClick={() => handleEdit(dyn)}
                                             >
-                                                Update
+                                                Edit
                                             </Button>
                                         </DialogTrigger>
                                         <DialogContent>

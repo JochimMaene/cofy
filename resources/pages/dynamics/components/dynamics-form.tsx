@@ -164,7 +164,8 @@ const DynamicsForm: React.FC<DynamicsFormProps> = ({
                     size="default"
                     className="w-full"
                 >
-                    Create Dynamics
+
+                    {initialData ? "Update Dynamics" : "Create Dynamics"}
                 </Button>
             </form>
         </Form>

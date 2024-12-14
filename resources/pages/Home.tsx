@@ -1,14 +1,14 @@
-import { useAuth } from "@/contexts/AuthProvider"
-import MainLayout from "@/layouts/MainLayout"
-import { useEffect } from "react"
-import { TeamSwitcher } from "@/components/team-switcher"
-import { MainNav } from "@/components/main-nav"
-import { UserNav } from "@/components/user-nav"
+import { Outlet } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthProvider";
+import MainLayout from "@/layouts/MainLayout";
+import { useEffect } from "react";
+import { MainNav } from "@/components/main-nav";
+import { UserNav } from "@/components/user-nav";
 
 const Home: React.FC = () => {
-  const { auth } = useAuth()
+  const { auth } = useAuth();
 
-  useEffect(() => {}, [auth?.token])
+  useEffect(() => { }, [auth?.token]);
 
   return (
     <MainLayout
@@ -21,14 +21,16 @@ const Home: React.FC = () => {
           <div className="flex h-16 items-center px-4">
             <MainNav className="mx-6" />
             <div className="ml-auto flex items-center space-x-4">
-              <TeamSwitcher />
               <UserNav />
             </div>
           </div>
         </div>
       </div>
+      <div className="p-4">
+        <Outlet />
+      </div>
     </MainLayout>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

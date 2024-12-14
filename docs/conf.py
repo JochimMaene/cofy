@@ -76,7 +76,7 @@ suppress_warnings = [
 todo_include_todos = True
 
 # -- Style configuration -----------------------------------------------------
-html_theme = "litestar_sphinx_theme"
+html_theme = "pydata_sphinx_theme"
 html_static_path = ["_static"]
 html_show_sourcelink = True
 html_title = "Litestar Fullstack Docs"
@@ -93,28 +93,6 @@ html_theme_options = {
     "logo": {
         "link": "https://github.com/JochimMaene/cofy",
     },
-    "extra_navbar_items": {
-        "Documentation": "index",
-        "Community": {
-            "Contributing": {
-                "description": "Learn how to contribute to Litestar Fullstack",
-                "link": "contribution-guide",
-                "icon": "contributing",
-            },
-            "Code of Conduct": {
-                "description": "Review the etiquette for interacting with the Litestar community",
-                "link": "https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md",
-                "icon": "coc",
-            },
-        },
-        "About": {
-            "Litestar Organization": {
-                "description": "About the Litestar organization",
-                "link": "https://litestar.dev/about/organization.html",
-                "icon": "org",
-            },
-        },
-    },
 }
 
 
@@ -129,7 +107,6 @@ def update_html_context(
 
 
 def setup(app: Sphinx) -> dict[str, bool]:
-    app.setup_extension("litestar_sphinx_theme")
     app.setup_extension("pydata_sphinx_theme")
     app.connect("html-page-context", update_html_context)
 

@@ -29,10 +29,10 @@ export function MainNav({
         Dynamics
       </Link>
       <Link
-        to="/dynamics"
+        to="/fds-data"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
       >
-        Settings
+        Fds data
       </Link>
     </nav>
   )

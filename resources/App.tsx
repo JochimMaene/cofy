@@ -7,6 +7,7 @@ import Register from "@/pages/access/Register"
 import Home from "@/pages/Home"
 import PageNotFound from "@/pages/PageNotFound"
 import DynamicsPage from "@/pages/dynamics/Dynamics"
+import FdsDataPage from "@/pages/fds-data/FdsData"
 import { useAuth } from "@/contexts/AuthProvider"
 import { useEffect } from "react"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -28,18 +29,27 @@ const App: React.FC = () => {
       <Toaster />
       <Routes>
         <Route path="/" element={<ProtectedRoutes />}>
-          <Route index element={<Home />} />
+          {/* Home as a layout for nested routes */}
+          <Route path="/" element={<Home />}>
+            <Route index element={<div>Welcome to Home</div>} /> {/* Default content */}
+            <Route path="dynamics" element={<DynamicsPage />} /> {/* Nested DynamicsPage */}
+            <Route path="fds-data" element={<FdsDataPage />} /> {/* Nested DynamicsPage */}
+          </Route>
         </Route>
+
         <Route path="/landing" element={<Placeholder />} />
         <Route path="/terms" element={<Placeholder />} />
         <Route path="/privacy" element={<Placeholder />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dynamics" element={<DynamicsPage />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
 
     </ThemeProvider>
+
+
+
+
   )
 }
 
