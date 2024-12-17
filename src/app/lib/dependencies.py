@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncGenerator
 from datetime import datetime
 from typing import Literal
 from uuid import UUID
@@ -18,22 +19,23 @@ from litestar.di import Provide
 from litestar.params import Dependency, Parameter
 
 from app.config import constants
+from app.lib.storage_service import FileStorageService
 
 __all__ = [
+    "BeforeAfter",
+    "CollectionFilter",
+    "FilterTypes",
+    "LimitOffset",
+    "OrderBy",
+    "SearchFilter",
     "create_collection_dependencies",
     "provide_created_filter",
     "provide_filter_dependencies",
     "provide_id_filter",
     "provide_limit_offset_pagination",
-    "provide_updated_filter",
-    "provide_search_filter",
     "provide_order_by",
-    "BeforeAfter",
-    "CollectionFilter",
-    "LimitOffset",
-    "OrderBy",
-    "SearchFilter",
-    "FilterTypes",
+    "provide_search_filter",
+    "provide_updated_filter",
 ]
 
 DTorNone = datetime | None
@@ -198,7 +200,7 @@ def provide_filter_dependencies(
         list[FilterTypes]: List of filters parsed from connection.
     """
     filters: list[FilterTypes] = []
-    if id_filter.values:  # noqa: PD011
+    if id_filter.values:
         filters.append(id_filter)
     filters.extend([created_filter, limit_offset, updated_filter])
 
@@ -226,3 +228,16 @@ def create_collection_dependencies() -> dict[str, Provide]:
         ORDER_BY_DEPENDENCY_KEY: Provide(provide_order_by, sync_to_thread=False),
         FILTERS_DEPENDENCY_KEY: Provide(provide_filter_dependencies, sync_to_thread=False),
     }
+
+
+async def provide_file_storage_service() -> AsyncGenerator[FileStorageService, None]:
+    """Provide File Storage service.
+
+    Returns:
+        FileStorageService: An File storage service object
+    """
+    async with FileStorageService.new(
+        uploads_dir=f"{constants.FILES_DIR}/uploads",
+        allow_extensions=["zip", "tar.gz", "tgz", "tar", "ipf"],
+    ) as service:
+        yield service

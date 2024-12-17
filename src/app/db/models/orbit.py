@@ -27,6 +27,3 @@ class Orbit(UUIDAuditBase):
         innerjoin=True,
         uselist=False,
     )
-
-    # satellite_id: Column(ForeignKey("satellite.id"))
-    # trajectory_config: Mapped[Trajectory] = mapped_column(JsonB)

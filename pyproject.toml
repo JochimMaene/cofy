@@ -23,6 +23,7 @@ dependencies = [
   "pandas>=2.2.3",
   "esa-godot>=1.9.0",
   "croniter>=5.0.1",
+  "fsspec>=2024.10.0",
 ]
 description = "Flight dynamics application based on GODOT."
 keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]

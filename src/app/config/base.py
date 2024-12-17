@@ -6,7 +6,7 @@ import os
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Final
+from typing import TYPE_CHECKING, Any, Final, Literal
 
 from advanced_alchemy.utils.text import slugify
 from litestar.serialization import decode_json, encode_json
@@ -170,6 +170,11 @@ class DatabaseSettings:
             )
         self._engine_instance = engine
         return self._engine_instance
+
+
+@dataclass
+class StorageSettings:
+    FS_TYPE: Literal["file", "gs"] = "file"
 
 
 @dataclass
@@ -431,6 +436,7 @@ class Settings:
     log: LogSettings = field(default_factory=LogSettings)
     redis: RedisSettings = field(default_factory=RedisSettings)
     saq: SaqSettings = field(default_factory=SaqSettings)
+    storage: StorageSettings = field(default_factory=StorageSettings)
 
     @classmethod
     def from_env(cls, dotenv_filename: str = ".env") -> Settings:

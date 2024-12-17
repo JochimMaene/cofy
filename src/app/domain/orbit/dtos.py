@@ -11,8 +11,8 @@ class OrbitDTO(SQLAlchemyDTO[Orbit]):
 
 
 class OrbitCreateDTO(SQLAlchemyDTO[Orbit]):
-    config = dto.config(exclude={"id", "created_at", "updated_at"})
+    config = dto.config(exclude={"id", "created_at", "updated_at", "satellite"})
 
 
 class OrbitUpdateDTO(SQLAlchemyDTO[Orbit]):
-    config = dto.config(exclude={"id", "created_at", "updated_at"}, partial=True)
+    config = dto.config(exclude={"id", "created_at", "updated_at", "satellite"}, partial=True)

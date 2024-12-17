@@ -36,7 +36,7 @@ class GroundStationController(Controller):
         name="ground_station:list",
         summary="List GroundStation",
         description="Retrieve the ground_station.",
-        path=urls.TAG_LIST,
+        path=urls.GROUND_STATION_LIST,
     )
     async def list_ground_station(
         self,
@@ -50,7 +50,7 @@ class GroundStationController(Controller):
     @get(
         operation_id="GetGroundStation",
         name="ground_station:get",
-        path=urls.TAG_DETAILS,
+        path=urls.GROUND_STATION_DETAILS,
         summary="Retrieve the details of a ground_station.",
     )
     async def get_ground_station(
@@ -75,7 +75,7 @@ class GroundStationController(Controller):
         cache_control=None,
         description="A ground_station is a place where you can upload and group collections of databases.",
         guards=[requires_superuser],
-        path=urls.TAG_CREATE,
+        path=urls.GROUND_STATION_CREATE,
         dto=GroundStationCreateDTO,
     )
     async def create_ground_station(
@@ -90,7 +90,7 @@ class GroundStationController(Controller):
     @patch(
         operation_id="UpdateGroundStation",
         name="ground_station:update",
-        path=urls.TAG_UPDATE,
+        path=urls.GROUND_STATION_UPDATE,
         guards=[requires_superuser],
         dto=GroundStationUpdateDTO,
     )
@@ -113,7 +113,7 @@ class GroundStationController(Controller):
     @delete(
         operation_id="DeleteGroundStation",
         name="ground_station:delete",
-        path=urls.TAG_DELETE,
+        path=urls.GROUND_STATION_DELETE,
         summary="Remove GroundStation",
         description="Removes a ground_station and its associations",
         guards=[requires_superuser],

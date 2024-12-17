@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import {
     Dialog,
-    DialogTrigger,
     DialogContent,
     DialogHeader,
     DialogTitle,

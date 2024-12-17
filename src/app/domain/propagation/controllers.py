@@ -1,7 +1,10 @@
+from tempfile import NamedTemporaryFile
+
 from godot import cosmos
 from godot.core import ipfwrap
 from litestar import post
 from litestar.controller import Controller
+from litestar.datastructures import UploadFile
 from litestar.di import Provide
 from litestar.dto import MsgspecDTO
 from litestar_saq.config import TaskQueues
@@ -12,30 +15,47 @@ from app.domain.propagation.schemas import JobRequest, PropagationInput, Propaga
 from app.domain.satellite.dependencies import provide_satellite_service
 from app.domain.satellite.services import SatelliteService
 from app.lib.fdy import get_dynamics_config
+from app.lib.storage_service import FileStorageService
 from app.lib.universe_assembler import uni as uni_basic
 
 
 # simple file data store for now
-async def propagate_and_save(ctx, *, tra_config: dict, uni_config: dict) -> None:
+async def propagate_and_save(
+    ctx,
+    *,
+    tra_config: dict,
+    uni_config: dict,
+) -> None:
     uni = cosmos.Universe(uni_config)
     tra = cosmos.Trajectory(uni, tra_config)
     tra.compute(False)
-
     # with tempfile.NamedTemporaryFile() as f:
     # id of the Earth as center of the ephemerides, according to the IMSORB body identification scheme
-    EARTH_ID = 3
+    earth_id = 3
 
-    fileHeader = [0, EARTH_ID, 1, 0, 0, 0, 0, 0]
+    file_header = [0, earth_id, 1, 0, 0, 0, 0, 0]
+    with NamedTemporaryFile() as f:
+        ipf_writer = ipfwrap.IpfWriter(
+            f.name,
+            dimension=6,  # 6 state elements (position and velocity)
+            derivatives=0,  # the ephemerides don't provide derivatives
+            fileType=1,  # indicates that this is an orbit interpolation file
+            blockHeaderSize=2,  # required block size for orbit interpolation files
+            fileHeader=file_header,
+        )
+        cosmos.writeIpf(ipf_writer, uni, tra, tra_config["setup"][0]["name"] + "_center", "ICRF", {"Earth": earth_id})
 
-    ipf_writer = ipfwrap.IpfWriter(
-        "data/sample.ipf",
-        dimension=6,  # 6 state elements (position and velocity)
-        derivatives=0,  # the ephemerides don't provide derivatives
-        fileType=1,  # indicates that this is an orbit interpolation file
-        blockHeaderSize=2,  # required block size for orbit interpolation files
-        fileHeader=fileHeader,
-    )
-    cosmos.writeIpf(ipf_writer, uni, tra, tra_config["setup"][0]["name"] + "_center", "ICRF", {"Earth": EARTH_ID})
+        async with FileStorageService.new(
+            uploads_dir="data/uploads",
+            allow_extensions=["ipf"],
+        ) as file_storage_service:
+            up_file = UploadFile("bytes", "example.ipf", f.read())
+            await file_storage_service.upload([up_file])
+
+        # async with OrbitService.new(
+        #     session=db_session,
+        # ) as service:
+        #     yield service
 
 
 class PropagationController(Controller):
@@ -59,6 +79,7 @@ class PropagationController(Controller):
     async def create_propagation_request(
         self,
         satellite_service: SatelliteService,
+        # file_storage_service: FileStorageService,
         data: PropagationInput,
         task_queues: TaskQueues,
     ) -> JobRequest:
