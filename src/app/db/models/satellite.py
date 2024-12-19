@@ -13,7 +13,7 @@ from app.lib.schema import CamelizedBaseStruct
 
 if TYPE_CHECKING:
     from .dynamics import Dynamics
-    from .orbit import Orbit
+    from .orbit import IpfOrbit
 
 
 class TleConfig(CamelizedBaseStruct):
@@ -70,7 +70,7 @@ class Satellite(UUIDAuditBase):
     # # ORM Relationships
     # # ------------
 
-    orbits: Mapped[list[Orbit]] = relationship(
+    orbits: Mapped[list[IpfOrbit]] = relationship(
         back_populates="satellite",
         lazy="noload",
         uselist=True,

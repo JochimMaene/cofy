@@ -1,7 +1,10 @@
+import datetime
 from tempfile import NamedTemporaryFile
+from uuid import UUID, uuid4
 
 from godot import cosmos
 from godot.core import ipfwrap
+from godot.core.tempo import Epoch
 from litestar import post
 from litestar.controller import Controller
 from litestar.datastructures import UploadFile
@@ -9,7 +12,9 @@ from litestar.di import Provide
 from litestar.dto import MsgspecDTO
 from litestar_saq.config import TaskQueues
 
+from app.config.app import alchemy
 from app.domain.accounts.guards import requires_active_user
+from app.domain.orbit.services import OrbitService
 from app.domain.propagation import urls
 from app.domain.propagation.schemas import JobRequest, PropagationInput, PropagationResult, return_propagation_template
 from app.domain.satellite.dependencies import provide_satellite_service
@@ -17,6 +22,10 @@ from app.domain.satellite.services import SatelliteService
 from app.lib.fdy import get_dynamics_config
 from app.lib.storage_service import FileStorageService
 from app.lib.universe_assembler import uni as uni_basic
+
+
+def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime.datetime:
+    return datetime.datetime.fromisoformat(godot_epoch.calStr("UTC")[:-4] + "Z")
 
 
 # simple file data store for now
@@ -45,17 +54,31 @@ async def propagate_and_save(
         )
         cosmos.writeIpf(ipf_writer, uni, tra, tra_config["setup"][0]["name"] + "_center", "ICRF", {"Earth": earth_id})
 
+        file_name = str(uuid4()) + ".ipf"
+
         async with FileStorageService.new(
             uploads_dir="data/uploads",
             allow_extensions=["ipf"],
         ) as file_storage_service:
-            up_file = UploadFile("bytes", "example.ipf", f.read())
+            up_file = UploadFile("bytes", file_name, f.read())
             await file_storage_service.upload([up_file])
 
-        # async with OrbitService.new(
-        #     session=db_session,
-        # ) as service:
-        #     yield service
+        async with (
+            alchemy.get_session() as db_session,
+            OrbitService.new(
+                session=db_session,
+            ) as orbit_service,
+        ):
+            _ = await orbit_service.create(
+                data={
+                    "file_name": file_name,
+                    "start": convert_godot_epoch_to_datetime(Epoch(tra_config["timeline"][0]["epoch"])),
+                    "end": convert_godot_epoch_to_datetime(Epoch(tra_config["timeline"][1]["point"]["epoch"])),
+                    "satellite_id": str(UUID(hex=tra_config["setup"][0]["name"])),
+                },
+                auto_commit=True,
+                auto_refresh=True,
+            )
 
 
 class PropagationController(Controller):

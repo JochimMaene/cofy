@@ -237,7 +237,7 @@ async def provide_file_storage_service() -> AsyncGenerator[FileStorageService, N
         FileStorageService: An File storage service object
     """
     async with FileStorageService.new(
-        uploads_dir=f"{constants.FILES_DIR}/uploads",
+        uploads_dir="data/uploads",
         allow_extensions=["zip", "tar.gz", "tgz", "tar", "ipf"],
     ) as service:
         yield service

@@ -1,5 +1,5 @@
 SATELLITE_LIST = "/api/satellites"
 SATELLITE_CREATE = "/api/satellites"
-SATELLITE_UPDATE = "/api/satellites/{ground_station_id:uuid}"
-SATELLITE_DELETE = "/api/satellites/{ground_station_id:uuid}"
-SATELLITE_DETAILS = "/api/satellites/{ground_station_id:uuid}"
+SATELLITE_UPDATE = "/api/satellites/{satellite_id:uuid}"
+SATELLITE_DELETE = "/api/satellites/{satellite_id:uuid}"
+SATELLITE_DETAILS = "/api/satellites/{satellite_id:uuid}"

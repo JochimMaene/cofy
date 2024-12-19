@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, TypeVar
 
 from litestar.utils.sync import AsyncCallable
 
-from app.config import constants
 from app.lib import storage
 from app.lib.exceptions import ApplicationError
 
@@ -93,7 +92,7 @@ class FileStorageService:
     @contextlib.asynccontextmanager
     async def new(
         cls: type[FileStorageServiceT],
-        uploads_dir: str = f"{constants.COLLECTIONS_DIR}/uploads",
+        uploads_dir: str = "data/uploads",
         allow_extensions: list[str] = ["zip", "tar.gz", "tgz", "tar"],  # noqa: B006
     ) -> AsyncIterator[FileStorageServiceT]:
         """Context manager that returns instance of file storage service.

@@ -60,7 +60,7 @@ saq = SAQConfig(
             name="Update environement files",
             scheduled_tasks=[
                 CronJob(
-                    function="app.domain.data.tasks.update_environment_files_status",
+                    function="app.domain.data_status.tasks.update_environment_files_status",
                     unique=True,
                     cron="* * * * *",
                     timeout=600,

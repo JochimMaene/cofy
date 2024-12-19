@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from uuid import UUID
 
 from advanced_alchemy.base import UUIDAuditBase
@@ -9,21 +8,42 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .satellite import Satellite
 
 
-class OrbitType(Enum):
-    IPF = 1
-    TLE = 2
-    OEM = 3
-
-
-class Orbit(UUIDAuditBase):
-    __tablename__ = "orbit"
+class IpfOrbit(UUIDAuditBase):
+    __tablename__ = "ipf_orbit"
     file_name: Mapped[str]
-    type: Mapped[OrbitType]
     start: Mapped[datetime]
     end: Mapped[datetime]
     satellite_id: Mapped[UUID] = mapped_column(ForeignKey("satellite.id", ondelete="cascade"))
     satellite: Mapped[Satellite] = relationship(
         back_populates="orbits",
+        lazy="selectin",
         innerjoin=True,
         uselist=False,
     )
+
+
+# class OemOrbit(UUIDAuditBase):
+#     __tablename__ = "oem_orbit"
+#     file_name: Mapped[str]
+#     start: Mapped[datetime]
+#     end: Mapped[datetime]
+#     satellite_id: Mapped[UUID] = mapped_column(ForeignKey("satellite.id", ondelete="cascade"))
+#     satellite: Mapped[Satellite] = relationship(
+#         back_populates="orbits",
+#         innerjoin=True,
+#         uselist=False,
+#     )
+
+
+# class TLE(UUIDAuditBase):
+#     __tablename__ = "tle"
+#     line1: Mapped[str]
+#     line2: Mapped[str]
+#     start: Mapped[datetime]
+#     end: Mapped[datetime]
+#     satellite_id: Mapped[UUID] = mapped_column(ForeignKey("satellite.id", ondelete="cascade"))
+#     satellite: Mapped[Satellite] = relationship(
+#         back_populates="orbits",
+#         innerjoin=True,
+#         uselist=False,
+#     )

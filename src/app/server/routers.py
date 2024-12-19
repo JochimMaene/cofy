@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from app.domain.accounts.controllers import AccessController, UserController, UserRoleController
-from app.domain.data.controllers import DataStatusController
+from app.domain.data_status.controllers import DataStatusController
 from app.domain.dynamics.controllers import DynamicsController
 from app.domain.ground_station.controllers import GroundStationController
 from app.domain.orbit.controllers import OrbitController

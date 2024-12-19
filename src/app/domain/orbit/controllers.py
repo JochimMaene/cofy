@@ -5,12 +5,14 @@ from typing import TYPE_CHECKING, Annotated
 from litestar import Controller, delete, get, patch, post
 from litestar.di import Provide
 
-from app.db.models import Orbit
+from app.db.models import IpfOrbit
 from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.orbit import urls
 from app.domain.orbit.dependencies import provide_orbit_service
 from app.domain.orbit.dtos import OrbitCreateDTO, OrbitDTO, OrbitUpdateDTO
 from app.domain.orbit.services import OrbitService
+from app.lib.dependencies import provide_file_storage_service
+from app.lib.storage_service import FileStorageService
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -25,8 +27,11 @@ class OrbitController(Controller):
     """Handles the interactions within the Orbit objects."""
 
     guards = [requires_active_user]
-    dependencies = {"orbit_service": Provide(provide_orbit_service)}
-    signature_namespace = {"OrbitService": OrbitService, "Orbit": Orbit}
+    dependencies = {
+        "orbit_service": Provide(provide_orbit_service),
+        "file_storage_service": Provide(provide_file_storage_service),
+    }
+    signature_namespace = {"OrbitService": OrbitService, "Orbit": IpfOrbit}
     orbit = ["Orbit"]
     return_dto = OrbitDTO
     tags = ["Orbit"]
@@ -42,7 +47,7 @@ class OrbitController(Controller):
         self,
         orbit_service: OrbitService,
         filters: Annotated[list[FilterTypes], Dependency(skip_validation=True)],
-    ) -> OffsetPagination[Orbit]:
+    ) -> OffsetPagination[IpfOrbit]:
         """List orbit."""
         results, total = await orbit_service.list_and_count(*filters)
         return orbit_service.to_schema(data=results, total=total, filters=filters)
@@ -63,7 +68,7 @@ class OrbitController(Controller):
                 description="The orbit to retrieve.",
             ),
         ],
-    ) -> Orbit:
+    ) -> IpfOrbit:
         """Get a orbit."""
         db_obj = await orbit_service.get(orbit_id)
         return orbit_service.to_schema(db_obj)
@@ -72,8 +77,6 @@ class OrbitController(Controller):
         operation_id="CreateOrbit",
         name="orbit:create",
         summary="Create a new orbit.",
-        cache_control=None,
-        description="A orbit is a place where you can upload and group collections of databases.",
         guards=[requires_superuser],
         path=urls.ORBIT_CREATE,
         dto=OrbitCreateDTO,
@@ -81,8 +84,8 @@ class OrbitController(Controller):
     async def create_orbit(
         self,
         orbit_service: OrbitService,
-        data: DTOData[Orbit],
-    ) -> Orbit:
+        data: DTOData[IpfOrbit],
+    ) -> IpfOrbit:
         """Create a new orbit."""
         db_obj = await orbit_service.create(data.create_instance())
         return orbit_service.to_schema(db_obj)
@@ -97,7 +100,7 @@ class OrbitController(Controller):
     async def update_orbit(
         self,
         orbit_service: OrbitService,
-        data: DTOData[Orbit],
+        data: DTOData[IpfOrbit],
         orbit_id: Annotated[
             UUID,
             Parameter(
@@ -105,7 +108,7 @@ class OrbitController(Controller):
                 description="The orbit to update.",
             ),
         ],
-    ) -> Orbit:
+    ) -> IpfOrbit:
         """Update a orbit."""
         db_obj = await orbit_service.update(item_id=orbit_id, data=data.create_instance())
         return orbit_service.to_schema(db_obj)
@@ -122,6 +125,7 @@ class OrbitController(Controller):
     async def delete_orbit(
         self,
         orbit_service: OrbitService,
+        file_storage_service: FileStorageService,
         orbit_id: Annotated[
             UUID,
             Parameter(
@@ -131,4 +135,7 @@ class OrbitController(Controller):
         ],
     ) -> None:
         """Delete a orbit."""
+        db_obj = await orbit_service.get(orbit_id)
+        file_storage_service.remove(f"data/uploads/{db_obj.file_name}")
+
         _ = await orbit_service.delete(orbit_id)

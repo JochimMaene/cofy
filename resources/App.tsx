@@ -8,10 +8,15 @@ import Home from "@/pages/Home"
 import PageNotFound from "@/pages/PageNotFound"
 import DynamicsPage from "@/pages/dynamics/Dynamics"
 import FdsDataPage from "@/pages/fds-data/FdsData"
+import SatellitesPage from "@/pages/satellite/Satellites"
 import { useAuth } from "@/contexts/AuthProvider"
 import { useEffect } from "react"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner";
+import MainLayout from "@/layouts/MainLayout"
+import { MainNav } from "@/components/main-nav"
+import { UserNav } from "@/components/user-nav"
+import { Outlet } from "react-router-dom"
 
 const App: React.FC = () => {
   const navigate = useNavigate()
@@ -29,11 +34,25 @@ const App: React.FC = () => {
       <Toaster />
       <Routes>
         <Route path="/" element={<ProtectedRoutes />}>
-          {/* Home as a layout for nested routes */}
-          <Route path="/" element={<Home />}>
-            <Route index element={<div>Welcome to Home</div>} /> {/* Default content */}
-            <Route path="dynamics" element={<DynamicsPage />} /> {/* Nested DynamicsPage */}
-            <Route path="fds-data" element={<FdsDataPage />} /> {/* Nested DynamicsPage */}
+          <Route element={<MainLayout>
+            <div className="hidden flex-col md:flex">
+              <div className="border-b">
+                <div className="flex h-16 items-center px-4">
+                  <MainNav className="mx-6" />
+                  <div className="ml-auto flex items-center space-x-4">
+                    <UserNav />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-4">
+              <Outlet />
+            </div>
+          </MainLayout>}>
+            <Route index element={<Home />} />
+            <Route path="dynamics" element={<DynamicsPage />} />
+            <Route path="fds-data" element={<FdsDataPage />} />
+            <Route path="satellites" element={<SatellitesPage />} />
           </Route>
         </Route>
 
@@ -44,12 +63,7 @@ const App: React.FC = () => {
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
-
     </ThemeProvider>
-
-
-
-
   )
 }
 
