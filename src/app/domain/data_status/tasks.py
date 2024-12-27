@@ -1,5 +1,5 @@
 from datetime import UTC, datetime
-
+import asyncio
 import httpx
 from croniter import croniter
 from litestar.status_codes import HTTP_200_OK
@@ -13,65 +13,84 @@ from app.domain.data_status.settings import ENVIRONMENT_DATA_SETTINGS
 
 logger = get_logger()
 
+async def _update_data_file(
+    data_setting: dict,
+    data_status: DataStatus | None,
+    service,
+    client: httpx.AsyncClient,
+    file_id: int,
+) -> None:
+    """Common logic for updating a data file."""
+    current_time = datetime.now(UTC)
+    response = await client.get(data_setting.URL)
+    
+    if response.status_code == HTTP_200_OK:
+        data_setting.update_func(response, data_setting.file_name)
+        status = StatusType.updated
+    else:
+        status = StatusType.out_of_date
+        if data_status:
+            await logger.warning("File for %s couldn't be updated. Using old one.", data_setting.name)
 
-# could be better to get rid of async here
+    next_update = (
+        croniter(data_setting.cron, current_time).get_next(datetime)
+        if data_setting.cron
+        else None
+    )
+
+    updated_status = DataStatus(
+        id=file_id,
+        name=data_setting.name if not data_status else data_status.name,
+        last_update=current_time,
+        next_update=next_update,
+        status=status,
+        URL=data_setting.URL if not data_status else data_status.URL,
+        cron=data_setting.cron if not data_status else data_status.cron,
+    )
+
+    if data_status:
+        await service.update(updated_status, auto_commit=True)
+    else:
+        await service.create(updated_status, auto_commit=True)
+
 async def update_environment_files_status(_: Context) -> None:
     await logger.ainfo("Checking environment files status.")
     client = httpx.AsyncClient(verify=False)
-    async with alchemy.get_session() as db_session:
-        service = await anext(provide_data_status_service(db_session))
+    
+    try:
+        async with alchemy.get_session() as db_session:
+            service = await anext(provide_data_status_service(db_session))
+            
+            update_tasks = []
+            for key, data_setting in ENVIRONMENT_DATA_SETTINGS.items():
+                data_status = await service.get(key) if await service.exists(id=key) else None
+                if not data_status or (data_status.cron and datetime.now(UTC) > data_status.next_update):
+                    await logger.ainfo(f"Queuing {data_setting.name} file update.")
+                    update_tasks.append(_update_data_file(data_setting, data_status, service, client, key))
+            
+            if update_tasks:
+                await asyncio.gather(*update_tasks)
+    finally:
+        await client.aclose()
 
-        for key, data_setting in ENVIRONMENT_DATA_SETTINGS.items():
-            data_status_exists = await service.exists(id=key)
+async def update_specific_file(file_id: int) -> None:
+    await logger.ainfo(f"Manual update triggered for file ID: {file_id}")
+    client = httpx.AsyncClient(verify=False)
+    
+    try:
+        async with alchemy.get_session() as db_session:
+            service = await anext(provide_data_status_service(db_session))
+            data_status = await service.get(file_id)
+            
+            if not data_status:
+                await logger.error(f"No data status found for ID: {file_id}")
+                return
 
-            if not data_status_exists:
-                await logger.ainfo(f"Performing {data_setting.name} file update because the status is not known.")
-                response = await client.get(data_setting.URL)
-                if response.status_code == HTTP_200_OK:
-                    data_setting.update_func(response, data_setting.file_name)
-                    status = StatusType.updated
-                else:
-                    status = StatusType.out_of_date
-                current_time = datetime.now(UTC)
-                if data_setting.cron is not None:
-                    next_update = croniter(data_setting.cron, current_time).get_next(datetime)
-                else:
-                    next_update = None
-                data_status = DataStatus(
-                    id=key,
-                    name=data_setting.name,
-                    last_update=current_time,
-                    next_update=next_update,
-                    status=status,
-                    URL=data_setting.URL,
-                    cron=data_setting.cron,
-                )
-                await service.create(data_status, auto_commit=True)
+            data_setting = ENVIRONMENT_DATA_SETTINGS.get(file_id)
+            if not data_setting:
+                await logger.error(f"No data setting found for ID: {file_id}")
+                return
 
-            else:
-                data_status = await service.get(key)
-                current_time = datetime.now(UTC)
-                if data_status.cron is not None and current_time > data_status.next_update:
-                    await logger.ainfo(f"Performing {data_status.name} file update as it is out-of-date.")
-                    response = await client.get(data_status.URL)
-                    next_update = croniter(data_status.cron, current_time).get_next(datetime)
-                    if response.status_code == HTTP_200_OK:
-                        data_setting.update_func(response, data_setting.file_name)
-                        data_status = DataStatus(
-                            id=key,
-                            last_update=current_time,
-                            next_update=next_update,
-                            status=StatusType.updated,
-                        )
-
-                        await service.update(data_status, auto_commit=True)
-                    else:
-                        await logger.warning("File for %s couldn't be updated. Using old one.", data_status.name)
-                        data_status = DataStatus(
-                            id=key,
-                            next_update=next_update,
-                            status=StatusType.out_of_date,
-                        )
-                        await service.update(data_status, auto_commit=True)
-
-    await client.aclose()
+            await _update_data_file(data_setting, data_status, service, client, file_id)
+    finally:
+        await client.aclose()

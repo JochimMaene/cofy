@@ -20,7 +20,7 @@ class DataStatusController(Controller):
     guards = [requires_active_user]
     dependencies = {"data_status_service": Provide(provide_data_status_service)}
     signature_namespace = {"DataStatusService": DataStatusService, "DataStatus": DataStatus}
-    tags = ["Data"]
+    tags = ["Environment Files"]
     return_dto = DataStatusDTO
 
     @get(
@@ -28,7 +28,7 @@ class DataStatusController(Controller):
         name="data_status:list",
         summary="List the environment data status",
         description="List all statuses of the environment files.",
-        path=urls.DATA_LIST,
+        path=urls.DATA_STATUS_LIST,
     )
     async def list_data_status(
         self,
@@ -41,7 +41,7 @@ class DataStatusController(Controller):
         name="data_status:details",
         summary="Get a specific environment data status",
         description="Get a the status of a specific environment data file from the database using the unique id.",
-        path=urls.DATA_DETAILS,
+        path=urls.DATA_STATUS_DETAILS,
     )
     async def get_data_status(self, data_status_service: DataStatusService, data_id: int) -> DataStatus:
         return await data_status_service.get(data_id)
@@ -49,7 +49,7 @@ class DataStatusController(Controller):
     @patch(
         summary="Update a specific specific environment data setting",
         description="Update a setting of how the environment data file is updated.",
-        path=urls.DATA_UPDATE,
+        path=urls.DATA_STATUS_UPDATE,
         guards=[requires_superuser],
         dto=DataStatusUpdateDTO,
     )

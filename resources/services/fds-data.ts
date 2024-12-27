@@ -1,17 +1,15 @@
 import { FdsData } from "@/types/fds-data";
+import { api } from "@/lib/axios";
 
 export const fetchFdsData = async (): Promise<FdsData[]> => {
-    const response = await fetch("/api/data-status");
-    if (!response.ok) throw new Error("Failed to fetch data.");
-    return response.json();
+    const response = await api.get("/api/data-status");
+    return response.data;
 };
 
 export const updateFdsData = async (data: FdsData): Promise<void> => {
-    const url = `/api/data-status/${data.id}`;
-    const response = await fetch(url, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    });
-    if (!response.ok) throw new Error("Failed to update data.");
+    await api.patch(`/api/data-status/${data.id}`, data);
+};
+
+export const refreshFdsData = async (id: number): Promise<void> => {
+    await api.post(`/api/data-update/${id}`);
 };

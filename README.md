@@ -17,8 +17,8 @@ Functionality is limited currently. The idea is to extend cofy using multiple mo
 - [x] Numerical orbit propagation, powered by GODOT
 - [ ] Orbit determination using position and velocity data
 - [x] Asynchronous calls and queue handling
-- [ ] Spacecraft and ground station configuration management using a relational database
-- [ ] Orbit file storage on the cloud and orbit file management
+- [x] Spacecraft and ground station configuration management using a relational database
+- [x] Orbit file storage on the cloud and orbit file management
 - [ ] Ground station pass calculations
 - [ ] Utilities for time scale conversion and state vector conversion
 - [ ] TLE fitting and propagation

@@ -6,7 +6,8 @@ import {
     AlertCircle,
     Calendar,
     Copy,
-    RotateCw
+    RotateCw,
+    CheckCircle2
 } from "lucide-react";
 import {
     Table,
@@ -26,18 +27,20 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import FdsDataForm from "./fds-data-form";
-import { fetchFdsData } from "@/services/fds-data";
-// import { fetchFdsData, refreshFdsData } from "@/services/fds-data";
+import { fetchFdsData, refreshFdsData } from "@/services/fds-data";
+// import { useUser } from "@/hooks/useUser";
+
 interface FdsDataListProps {
     refresh: boolean;
     onRefresh: () => void;
 }
 
 const FdsDataList: React.FC<FdsDataListProps> = ({ refresh, onRefresh }) => {
+    // const { isSuperuser } = useUser();
     const [fdsData, setFdsData] = useState<FdsData[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [editingFdsData, setEditingFdsData] = useState<FdsData | null>(null);
-    const [refreshing, setRefreshing] = useState<string | null>(null);
+    const [refreshing, setRefreshing] = useState<number | null>(null);
 
     useEffect(() => {
         const loadFdsData = async () => {
@@ -54,14 +57,14 @@ const FdsDataList: React.FC<FdsDataListProps> = ({ refresh, onRefresh }) => {
         loadFdsData();
     }, [refresh]);
 
-    const getStatusStyle = (status: string) => {
+    const getStatusIcon = (status: string) => {
         switch (status) {
             case "updated":
-                return "bg-green-50 text-green-700 ring-green-700/10";
+                return <CheckCircle2 className="h-5 w-5 text-green-500" />;
             case "out_of_date":
-                return "bg-red-50 text-red-700 ring-red-700/10";
+                return <AlertCircle className="h-5 w-5 text-red-500" />;
             default:
-                return "bg-gray-50 text-gray-700 ring-gray-700/10";
+                return null;
         }
     };
 
@@ -70,14 +73,14 @@ const FdsDataList: React.FC<FdsDataListProps> = ({ refresh, onRefresh }) => {
         toast.success("URL copied to clipboard");
     };
 
-    const handleManualRefresh = async (id: string) => {
+    const handleManualRefresh = async (id: number) => {
         setRefreshing(id);
         try {
             await refreshFdsData(id);
-            toast.success("Data refresh initiated");
+            toast.success("Environment file updated.");
             onRefresh();
         } catch (error) {
-            toast.error("Failed to refresh data");
+            toast.error("Failed to update environment file.");
         } finally {
             setRefreshing(null);
         }
@@ -122,9 +125,12 @@ const FdsDataList: React.FC<FdsDataListProps> = ({ refresh, onRefresh }) => {
                                 <TableRow key={data.id}>
                                     <TableCell className="font-medium">{data.name}</TableCell>
                                     <TableCell>
-                                        <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusStyle(data.status)}`}>
-                                            {data.status}
-                                        </span>
+                                        <div
+                                            className="flex items-center justify-center"
+                                            title={data.status}
+                                        >
+                                            {getStatusIcon(data.status)}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
@@ -162,13 +168,10 @@ const FdsDataList: React.FC<FdsDataListProps> = ({ refresh, onRefresh }) => {
                                                 size="icon"
                                                 className="h-8 w-8"
                                                 title="Refresh Data"
-                                            >
-                                                <RotateCw className={`h-4 w-4 ${null ? 'animate-spin' : ''}`} />
-                                                {/* onClick={() => handleManualRefresh(data.id)}
+                                                onClick={() => handleManualRefresh(data.id)}
                                                 disabled={refreshing === data.id}
-                                                title="Refresh Data"
                                             >
-                                                <RotateCw className={`h-4 w-4 ${refreshing === data.id ? 'animate-spin' : ''}`} /> */}
+                                                <RotateCw className={`h-4 w-4 ${refreshing === data.id ? 'animate-spin' : ''}`} />
                                             </Button>
                                             <Button
                                                 variant="ghost"

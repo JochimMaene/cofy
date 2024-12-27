@@ -1,45 +1,54 @@
-import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
+import { Link, useLocation } from "react-router-dom"
+
+const navItems = [
+  {
+    title: "Home",
+    href: "/",
+  },
+  {
+    title: "Satellites",
+    href: "/satellites",
+  },
+  {
+    title: "Ground Stations",
+    href: "/ground-stations",
+  },
+  {
+    title: "Dynamics",
+    href: "/dynamics",
+  },
+  {
+    title: "FDS Data",
+    href: "/fds-data",
+  },
+]
 
 export function MainNav({
   className,
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
+  const location = useLocation()
+
   return (
     <nav
       className={cn("flex items-center space-x-4 lg:space-x-6", className)}
       {...props}
     >
-      <Link
-        to="/examples/dashboard"
-        className="text-sm font-medium transition-colors hover:text-primary"
-      >
-        Overview
-      </Link>
-      <Link
-        to="/examples/dashboard"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Customers
-      </Link>
-      <Link
-        to="/dynamics"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Dynamics
-      </Link>
-      <Link
-        to="/fds-data"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Fds data
-      </Link>
-      <Link
-        to="/satellites"
-        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-      >
-        Satellites
-      </Link>
+      {navItems.map((item) => (
+        <Link
+          key={item.href}
+          to={item.href}
+          className={cn(
+            "text-sm font-medium transition-colors hover:text-primary",
+            location.pathname === item.href
+              ? "text-primary"
+              : "text-muted-foreground"
+          )}
+        >
+          {item.title}
+        </Link>
+      ))}
     </nav>
   )
 }
