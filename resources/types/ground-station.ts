@@ -10,5 +10,5 @@ export interface GroundStation {
     longitude: number;
     latitude: number;
     altitude: number;
-    elevation_mask: ElevationMaskPoint[];
+    elevationMask: ElevationMaskPoint[];
 } 

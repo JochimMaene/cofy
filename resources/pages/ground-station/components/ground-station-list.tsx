@@ -105,7 +105,7 @@ export function GroundStationList({ groundStations, onRefresh }: GroundStationLi
                                 <TableCell>{station.longitude.toFixed(6)}°</TableCell>
                                 <TableCell>{station.latitude.toFixed(6)}°</TableCell>
                                 <TableCell>{station.altitude.toFixed(1)} m</TableCell>
-                                <TableCell>{station.elevation_mask?.length || 0}</TableCell>
+                                <TableCell>{station.elevationMask?.length || 0}</TableCell>
                                 <TableCell className="text-right">
                                     {(
                                         <div className="flex justify-end space-x-2">
@@ -135,8 +135,13 @@ export function GroundStationList({ groundStations, onRefresh }: GroundStationLi
             <Dialog
                 open={isDialogOpen || !!selectedStation}
                 onOpenChange={(open) => {
-                    setIsDialogOpen(open);
-                    if (!open) setSelectedStation(null);
+                    if (!open) {
+                        if (selectedStation) {
+                            setSelectedStation(null);
+                        } else {
+                            setIsDialogOpen(false);
+                        }
+                    }
                 }}
             >
                 <DialogContent className="max-w-2xl">
