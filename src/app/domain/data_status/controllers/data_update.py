@@ -1,13 +1,13 @@
 from litestar import Controller, post
 from litestar.di import Provide
-from litestar.status_codes import HTTP_202_ACCEPTED
 from litestar.response import Response
+from litestar.status_codes import HTTP_202_ACCEPTED
 
-from app.domain.data_status import urls
 from app.domain.accounts.guards import requires_superuser
+from app.domain.data_status import urls
 from app.domain.data_status.dependencies import provide_data_status_service
 from app.domain.data_status.tasks import update_specific_file
-from app.domain.data_status import urls
+
 
 class DataUpdateController(Controller):
     """Controller for manual data updates."""
@@ -27,5 +27,5 @@ class DataUpdateController(Controller):
         await update_specific_file(data_id)
         return Response(
             status_code=HTTP_202_ACCEPTED,
-            content={"message": f"Update triggered for file ID: {data_id}"}
+            content={"message": f"Update triggered for file ID: {data_id}"},
         )

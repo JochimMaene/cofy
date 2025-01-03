@@ -17,7 +17,7 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Edit2, Trash2, PlusCircle } from "lucide-react";
+import { Edit2, Trash2, PlusCircle, Copy } from "lucide-react";
 import { GroundStationForm } from "./ground-station-form";
 import { createGroundStation, updateGroundStation, deleteGroundStation } from "@/services/ground-station";
 // import { useUser } from "@/hooks/useUser";
@@ -69,7 +69,7 @@ export function GroundStationList({ groundStations, onRefresh }: GroundStationLi
     };
 
     return (
-        <Card className="w-full">
+        <Card className="w-full max-w-[1000px] mx-auto">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <div>
                     <CardTitle>Ground Stations</CardTitle>
@@ -93,7 +93,7 @@ export function GroundStationList({ groundStations, onRefresh }: GroundStationLi
                             <TableHead>Longitude</TableHead>
                             <TableHead>Latitude</TableHead>
                             <TableHead>Altitude</TableHead>
-                            <TableHead>Mask Points</TableHead>
+                            <TableHead># Elevation Mask Points</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -109,6 +109,17 @@ export function GroundStationList({ groundStations, onRefresh }: GroundStationLi
                                 <TableCell className="text-right">
                                     {(
                                         <div className="flex justify-end space-x-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(station.id);
+                                                    toast.success("ID copied to clipboard");
+                                                }}
+                                                title="Copy ID"
+                                            >
+                                                <Copy className="h-4 w-4" />
+                                            </Button>
                                             <Button
                                                 variant="ghost"
                                                 size="icon"

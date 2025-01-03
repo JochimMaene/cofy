@@ -1,5 +1,6 @@
 import datetime
 from tempfile import NamedTemporaryFile
+from typing import Any
 from uuid import UUID, uuid4
 
 from godot import cosmos
@@ -30,7 +31,7 @@ def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime.datetime:
 
 # simple file data store for now
 async def propagate_and_save(
-    ctx,
+    ctx: Any,
     *,
     tra_config: dict,
     uni_config: dict,
@@ -82,7 +83,7 @@ async def propagate_and_save(
 
 
 class PropagationController(Controller):
-    path = "/propagate/"
+    guards = [requires_active_user]
     dependencies = {
         "satellite_service": Provide(provide_satellite_service),
     }

@@ -18,6 +18,7 @@ import { MainNav } from "@/components/main-nav"
 import { UserNav } from "@/components/user-nav"
 import { Outlet } from "react-router-dom"
 import GroundStationPage from "@/pages/ground-station/GroundStation"
+import OrbitPage from "@/pages/orbit/Orbit"
 
 const App: React.FC = () => {
   const navigate = useNavigate()
@@ -55,6 +56,7 @@ const App: React.FC = () => {
             <Route path="fds-data" element={<FdsDataPage />} />
             <Route path="satellites" element={<SatellitesPage />} />
             <Route path="ground-stations" element={<GroundStationPage />} />
+            <Route path="orbits" element={<OrbitPage />} />
           </Route>
         </Route>
 

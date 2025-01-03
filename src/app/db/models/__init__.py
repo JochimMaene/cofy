@@ -11,11 +11,12 @@ from .team_invitation import TeamInvitation
 from .team_member import TeamMember
 from .team_roles import TeamRoles
 from .team_tag import team_tag
+from .tle import TLE
 from .user import User
 from .user_role import UserRole
 
 __all__ = (
-    # "TLE",
+    "TLE",
     "DataStatus",
     "Dynamics",
     "GroundStation",

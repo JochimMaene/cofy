@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Search, Edit2, Trash2, Check, X } from "lucide-react";
+import { PlusCircle, Search, Edit2, Trash2, Copy } from "lucide-react";
 import DynamicsForm from "./dynamics-form";
 import { fetchDynamics, deleteDynamics } from "@/services/dynamics";
 
@@ -168,6 +168,17 @@ const DynamicsList: React.FC<DynamicsListProps> = ({ refresh, onRefresh }) => {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end space-x-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(dyn.id);
+                                                    toast.success("ID copied to clipboard");
+                                                }}
+                                                title="Copy ID"
+                                            >
+                                                <Copy className="h-4 w-4" />
+                                            </Button>
                                             <Dialog>
                                                 <DialogTrigger asChild>
                                                     <Button
