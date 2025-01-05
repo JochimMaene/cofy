@@ -67,6 +67,10 @@ class ApplicationError(Exception):
         return " ".join((*self.args, self.detail)).strip()
 
 
+class MaxIterationsExceededError(ApplicationError):
+    """Raised when the maximum number of iterations is exceeded during processing."""
+
+
 class MissingDependencyError(ApplicationError, ImportError):
     """Missing optional dependency.
 
@@ -129,6 +133,8 @@ def exception_to_http_response(
         http_exc = _HTTPConflictException
     elif isinstance(exc, AuthorizationError):
         http_exc = PermissionDeniedException
+    elif isinstance(exc, MaxIterationsExceededError):
+        http_exc = _HTTPConflictException
     else:
         http_exc = InternalServerException
     if request.app.debug and http_exc not in (PermissionDeniedException, NotFoundError, AuthorizationError):

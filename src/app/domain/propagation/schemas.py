@@ -42,7 +42,7 @@ class JobRequest(CamelizedBaseStruct):
 
 
 class PropagationInput(CamelizedBaseStruct):
-    satellite: UUID
+    satellite_id: UUID
     initial_orbit: UnionType
     initial_mass: float
     epoch_start: str
@@ -56,7 +56,7 @@ class PropagationResult(CamelizedBaseStruct):
 
 
 def return_propagation_template(propagation_input: PropagationInput) -> dict:
-    sc_name = propagation_input.satellite.hex
+    sc_name = propagation_input.satellite_id.hex
     return {
         "setup": [
             {

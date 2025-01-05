@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from app.domain.accounts.controllers import AccessController, UserController, UserRoleController
 from app.domain.data_status.controllers.data_status import DataStatusController
+from app.domain.data_status.controllers.data_update import DataUpdateController
 from app.domain.dynamics.controllers import DynamicsController
 from app.domain.ground_station.controllers import GroundStationController
 from app.domain.orbit.controllers import OrbitController
@@ -14,8 +15,9 @@ from app.domain.satellite.controllers import SatelliteController
 from app.domain.system.controllers import SystemController
 from app.domain.tags.controllers import TagController
 from app.domain.teams.controllers import TeamController, TeamMemberController
+from app.domain.tle.controllers.tle_fitting import TleFitController
+from app.domain.tle.controllers.tles import TLEController
 from app.domain.web.controllers import WebController
-from app.domain.data_status.controllers.data_update import DataUpdateController
 
 if TYPE_CHECKING:
     from litestar.types import ControllerRouterHandler
@@ -38,4 +40,6 @@ route_handlers: list[ControllerRouterHandler] = [
     DynamicsController,
     PropagationController,
     OrbitController,
+    TLEController,
+    TleFitController,
 ]

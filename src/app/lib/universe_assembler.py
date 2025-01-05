@@ -1,6 +1,6 @@
 # file version number
 
-uni: dict = {
+uni_config: dict = {
     "version": "3.0",
     "spacetime": {"system": "GCRS"},
     "ephemeris": [
@@ -23,6 +23,7 @@ uni: dict = {
             "type": "AxesOrient",
             "config": {"model": "IERS2000", "nutation": "data/nutation2000A.ipf", "erp": "data/erp.ipf"},
         },
+        {"name": "TEME", "type": "AxesOrient", "config": {"model": "TEME", "nutation": "data/nutation2000A.ipf"}},
     ],
     "bodies": [
         {

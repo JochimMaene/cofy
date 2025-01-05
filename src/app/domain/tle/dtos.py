@@ -7,4 +7,4 @@ __all__ = ["TLEDTO"]
 
 
 class TLEDTO(SQLAlchemyDTO[TLE]):
-    config = dto.config(exclude={"created_at", "updated_at", "orbits"})
+    config = dto.config(exclude={"created_at", "updated_at", "satellite"})

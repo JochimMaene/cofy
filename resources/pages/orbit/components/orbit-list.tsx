@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { format } from "date-fns";
 import { deleteOrbit, downloadOrbit } from "@/services/orbit";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -132,10 +131,10 @@ export function OrbitList({ orbits = [], onRefresh }: OrbitListProps) {
                                     </TableCell>
                                     <TableCell>{orbit.fileName}</TableCell>
                                     <TableCell>
-                                        {format(new Date(orbit.start), "PPpp")}
+                                        {new Date(orbit.start).toLocaleString()}
                                     </TableCell>
                                     <TableCell>
-                                        {format(new Date(orbit.end), "PPpp")}
+                                        {new Date(orbit.start).toLocaleString()}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end space-x-2">

@@ -23,6 +23,7 @@ class TLE(UUIDAuditBase):
     satellite_id: Mapped[UUID] = mapped_column(ForeignKey("satellite.id", ondelete="cascade"))
     satellite: Mapped[Satellite] = relationship(
         back_populates="tles",
+        lazy="selectin",
         innerjoin=True,
         uselist=False,
     )
