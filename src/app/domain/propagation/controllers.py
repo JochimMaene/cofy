@@ -1,5 +1,6 @@
 import datetime
 from tempfile import NamedTemporaryFile
+from typing import Any
 from uuid import UUID, uuid4
 
 from godot import cosmos
@@ -11,6 +12,7 @@ from litestar.datastructures import UploadFile
 from litestar.di import Provide
 from litestar.dto import MsgspecDTO
 from litestar_saq.config import TaskQueues
+from structlog import get_logger
 
 from app.config.app import alchemy
 from app.domain.accounts.guards import requires_active_user
@@ -19,9 +21,12 @@ from app.domain.propagation import urls
 from app.domain.propagation.schemas import JobRequest, PropagationInput, PropagationResult, return_propagation_template
 from app.domain.satellite.dependencies import provide_satellite_service
 from app.domain.satellite.services import SatelliteService
+from app.lib.exceptions import ApplicationClientError
 from app.lib.fdy import get_dynamics_config
 from app.lib.storage_service import FileStorageService
-from app.lib.universe_assembler import uni as uni_basic
+from app.lib.universe_assembler import uni_config as uni_basic
+
+logger = get_logger()
 
 
 def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime.datetime:
@@ -30,14 +35,19 @@ def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime.datetime:
 
 # simple file data store for now
 async def propagate_and_save(
-    ctx,
+    ctx: Any,
     *,
     tra_config: dict,
     uni_config: dict,
 ) -> None:
-    uni = cosmos.Universe(uni_config)
-    tra = cosmos.Trajectory(uni, tra_config)
-    tra.compute(False)
+    try:
+        uni = cosmos.Universe(uni_config)
+        tra = cosmos.Trajectory(uni, tra_config)
+        tra.compute(False)
+
+    except Exception:
+        logger.exception("An error occurred during propagation.")
+        raise
     # with tempfile.NamedTemporaryFile() as f:
     # id of the Earth as center of the ephemerides, according to the IMSORB body identification scheme
     earth_id = 3
@@ -53,7 +63,7 @@ async def propagate_and_save(
             fileHeader=file_header,
         )
         cosmos.writeIpf(ipf_writer, uni, tra, tra_config["setup"][0]["name"] + "_center", "ICRF", {"Earth": earth_id})
-
+        del ipf_writer
         file_name = str(uuid4()) + ".ipf"
 
         async with FileStorageService.new(
@@ -82,7 +92,7 @@ async def propagate_and_save(
 
 
 class PropagationController(Controller):
-    path = "/propagate/"
+    guards = [requires_active_user]
     dependencies = {
         "satellite_service": Provide(provide_satellite_service),
     }
@@ -106,7 +116,7 @@ class PropagationController(Controller):
         data: PropagationInput,
         task_queues: TaskQueues,
     ) -> JobRequest:
-        satellite = await satellite_service.get(data.satellite)
+        satellite = await satellite_service.get(data.satellite_id)
 
         uni_config = uni_basic | get_dynamics_config(satellite.dynamics, satellite)
 
@@ -118,4 +128,9 @@ class PropagationController(Controller):
             tra_config=tra_config,
             uni_config=uni_config,
         )
-        return JobRequest(queue_id=job.key, location=f"saq/api/queues/{job.id}")
+
+        if job is None:
+            msg = "Failed to enqueue the propagation job."
+            raise ApplicationClientError(msg)
+
+        return JobRequest(queue_id=UUID(job.key), location=f"saq/api/queues/{job.id}")

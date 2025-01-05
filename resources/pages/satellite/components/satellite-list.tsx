@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Satellite } from "@/types/satellite";
-import { Eye, Pencil, Trash2, PlusCircle, Search, Rocket } from "lucide-react";
+import { Eye, Pencil, Trash2, PlusCircle, Search, Rocket, Copy } from "lucide-react";
 import {
     Table,
     TableHeader,
@@ -37,6 +37,7 @@ const SatelliteList: React.FC<SatelliteListProps> = ({ refresh, onRefresh }) => 
     const [inspectingSatellite, setInspectingSatellite] = useState<Satellite | null>(null);
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     useEffect(() => {
         const loadSatellites = async () => {
@@ -97,20 +98,20 @@ const SatelliteList: React.FC<SatelliteListProps> = ({ refresh, onRefresh }) => 
                         Manage and monitor your satellite configurations
                     </p>
                 </div>
-                <Dialog>
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button variant="default" className="flex items-center gap-2">
                             <PlusCircle className="h-4 w-4" />
                             Add Satellite
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[600px]">
+                    <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                             <DialogTitle>Create Satellite</DialogTitle>
                         </DialogHeader>
                         <SatelliteForm
                             onRefresh={onRefresh}
-                            onClose={() => setEditingSatellite(null)}
+                            onClose={() => setIsDialogOpen(false)}
                         />
                     </DialogContent>
                 </Dialog>
@@ -164,6 +165,17 @@ const SatelliteList: React.FC<SatelliteListProps> = ({ refresh, onRefresh }) => 
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(satellite.id);
+                                                    toast.success("ID copied to clipboard");
+                                                }}
+                                                title="Copy ID"
+                                            >
+                                                <Copy className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
                                                 className="h-8 w-8"
                                                 onClick={() => handleInspect(satellite)}
                                                 title="Inspect"
@@ -202,7 +214,7 @@ const SatelliteList: React.FC<SatelliteListProps> = ({ refresh, onRefresh }) => 
                 open={editingSatellite !== null}
                 onOpenChange={(open) => !open && setEditingSatellite(null)}
             >
-                <DialogContent className="sm:max-w-[600px]">
+                <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Update Satellite</DialogTitle>
                     </DialogHeader>

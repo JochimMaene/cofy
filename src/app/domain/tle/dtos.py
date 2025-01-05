@@ -1,40 +1,10 @@
-from datetime import datetime
+from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 
-from pydantic import UUID4, BaseModel, Field
+from app.db.models import TLE
+from app.lib import dto
 
-from app.domain.satellite.models import Satellite
+__all__ = ["TLEDTO"]
 
 
-class TLE_Gen(BaseModel):
-    satellite: UUID4
-    orbit: UUID4
-    begin: datetime = Field(description="Begin epoch")
-    end: datetime = Field(description="End epoch")
-    step: str | None = Field("1d", description="Generate TLEs with this step")
-    manoeuvre_file: str | None
-    bstar_fit: bool | None = Field(False,description="Flag to use B-star fitting.")
-    output_file_path: str = Field(description="Output file path for the TLEs")
-
-def generate_input(tle_gen: TLE_Gen, satellite: Satellite):
-    tle_config = satellite.tle_config
-
-    {
-        "description": None,
-        "universe": [None],
-        "spacecraft": {"name": satellite.name, "orbitFile": "string"},
-        "begin": tle_gen.begin,
-        "end": tle_gen.end,
-        "step": tle_gen.step,
-        "minimumStep": None,
-        "manoeuvreFile": tle_gen.manoeuvre_file,
-        "tleFit":{"bStarFit":tle_gen.bstar_fit},
-        "spaceCraftData": {
-            "satelliteNumber": tle_config.norad_id,
-            "classification": tle_config.classification,
-            "yearOfLaunch": tle_config.launch_year,
-            "launchNumber": tle_config.launch_number,
-            "pieceOfLaunch": tle_config.piece_of_launch,
-            "orbitNumbersFile":None,
-        },
-        "outputFile": tle_gen.output_file_path,
-    }
+class TLEDTO(SQLAlchemyDTO[TLE]):
+    config = dto.config(exclude={"created_at", "updated_at", "satellite"})

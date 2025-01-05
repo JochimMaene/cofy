@@ -24,10 +24,10 @@ dependencies = [
   "esa-godot>=1.9.0",
   "croniter>=5.0.1",
   "fsspec>=2024.10.0",
+  "matplotlib>=3.10.0",
 ]
 description = "Flight dynamics application based on GODOT."
 keywords = ["litestar", "sqlalchemy", "alembic", "fullstack", "api", "asgi", "litestar", "vite", "spa"]
-license = { text = "MIT" }
 name = "app"
 readme = "README.md"
 requires-python = ">=3.11"

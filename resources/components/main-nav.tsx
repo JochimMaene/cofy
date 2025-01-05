@@ -22,6 +22,10 @@ const navItems = [
     title: "FDS Data",
     href: "/fds-data",
   },
+  {
+    title: "Orbits",
+    href: "/orbits",
+  },
 ]
 
 export function MainNav({

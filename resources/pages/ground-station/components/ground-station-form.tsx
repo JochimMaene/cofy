@@ -21,7 +21,7 @@ const formSchema = z.object({
     longitude: z.number().min(-180).max(180),
     latitude: z.number().min(-90).max(90),
     altitude: z.number(),
-    elevation_mask: z.array(z.object({
+    elevationMask: z.array(z.object({
         azimuth: z.number().min(0).max(360),
         elevation: z.number().min(0).max(90),
     })),
@@ -42,7 +42,7 @@ export function GroundStationForm({ initialData, onSubmit, onCancel }: GroundSta
             longitude: 0,
             latitude: 0,
             altitude: 0,
-            elevation_mask: [],
+            elevationMask: [],
         },
     });
 
@@ -131,8 +131,8 @@ export function GroundStationForm({ initialData, onSubmit, onCancel }: GroundSta
                 </div>
 
                 <ElevationMaskEditor
-                    value={form.watch("elevation_mask")}
-                    onChange={(value) => form.setValue("elevation_mask", value)}
+                    value={form.watch("elevationMask")}
+                    onChange={(value) => form.setValue("elevationMask", value)}
                 />
 
                 <div className="flex justify-end space-x-2">

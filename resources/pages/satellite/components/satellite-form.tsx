@@ -65,6 +65,46 @@ interface SatelliteFormProps {
     onClose: () => void;
 }
 
+interface FormSectionProps {
+    title: string;
+    fields: Array<{
+        name: string;
+        label: string;
+        type?: "text" | "number";
+    }>;
+    control: any;
+}
+
+const FormSection = ({ title, fields, control }: FormSectionProps) => (
+    <div className="space-y-4 border p-4 rounded">
+        <h3 className="text-lg font-medium">{title}</h3>
+        <div className="grid grid-cols-2 gap-4">
+            {fields.map(({ name, label, type = "text" }) => (
+                <FormField
+                    key={name}
+                    name={name}
+                    control={control}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>{label}</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type={type}
+                                    {...field}
+                                    onChange={e => field.onChange(
+                                        type === "number" ? parseFloat(e.target.value) : e.target.value
+                                    )}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            ))}
+        </div>
+    </div>
+);
+
 const SatelliteForm: React.FC<SatelliteFormProps> = ({
     initialData,
     onRefresh,
@@ -143,72 +183,80 @@ const SatelliteForm: React.FC<SatelliteFormProps> = ({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                    name="name"
+                <FormSection
+                    title="Basic Information"
                     control={form.control}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    fields={[
+                        { name: "name", label: "Name" },
+                        { name: "group", label: "Group" },
+                        { name: "dryMass", label: "Dry Mass (kg)", type: "number" },
+                    ]}
                 />
 
-                <FormField
-                    name="group"
+                <FormSection
+                    title="Drag Configuration"
                     control={form.control}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Group</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    fields={[
+                        { name: "dragArea", label: "Drag Area (m²)", type: "number" },
+                        { name: "dragCoefficient", label: "Drag Coefficient", type: "number" },
+                    ]}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                        name="dryMass"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Dry Mass (kg)</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        {...field}
-                                        onChange={e => field.onChange(parseFloat(e.target.value))}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                <FormSection
+                    title="SRP Configuration"
+                    control={form.control}
+                    fields={[
+                        { name: "srpArea", label: "SRP Area (m²)", type: "number" },
+                        { name: "srpCoefficient", label: "SRP Coefficient", type: "number" },
+                    ]}
+                />
 
-                    <FormField
-                        name="dragArea"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Drag Area (m²)</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        {...field}
-                                        onChange={e => field.onChange(parseFloat(e.target.value))}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormSection
+                    title="TLE Configuration"
+                    control={form.control}
+                    fields={[
+                        { name: "tleConfig.noradId", label: "NORAD ID", type: "number" },
+                        { name: "tleConfig.launchYear", label: "Launch Year", type: "number" },
+                        { name: "tleConfig.launchNumber", label: "Launch Number", type: "number" },
+                        { name: "tleConfig.pieceOfLaunch", label: "Piece of Launch" },
+                    ]}
+                />
 
+                <FormSection
+                    title="Propulsion System"
+                    control={form.control}
+                    fields={[
+                        { name: "propulsion.name", label: "Name" },
+                        { name: "propulsion.direction", label: "Direction" },
+                        { name: "propulsion.isp", label: "ISP", type: "number" },
+                        { name: "propulsion.thrustLevel", label: "Thrust Level", type: "number" },
+                        { name: "propulsion.minBurnDuration", label: "Min Burn Duration", type: "number" },
+                        { name: "propulsion.maxBurnDuration", label: "Max Burn Duration", type: "number" },
+                    ]}
+                />
+
+                <FormSection
+                    title="AOCS Configuration"
+                    control={form.control}
+                    fields={[
+                        { name: "aocs.name", label: "AOCS Name" },
+                        { name: "aocs.maximumAngVel", label: "Maximum Angular Velocity", type: "number" },
+                    ]}
+                />
+
+                <FormSection
+                    title="GNSS Configuration"
+                    control={form.control}
+                    fields={[
+                        { name: "gnss.name", label: "GNSS Name" },
+                        { name: "gnss.velStd", label: "Velocity STD", type: "number" },
+                        { name: "gnss.posXStd", label: "Position X STD", type: "number" },
+                        { name: "gnss.posYStd", label: "Position Y STD", type: "number" },
+                        { name: "gnss.posZStd", label: "Position Z STD", type: "number" },
+                    ]}
+                />
+
+                {/* Dynamics selection needs special handling due to Select component */}
                 <FormField
                     name="dynamicsId"
                     control={form.control}
@@ -236,55 +284,6 @@ const SatelliteForm: React.FC<SatelliteFormProps> = ({
                         </FormItem>
                     )}
                 />
-
-                {/* TLE Config Section */}
-                <div className="space-y-4 border p-4 rounded">
-                    <h3 className="text-lg font-medium">TLE Configuration</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                            name="tleConfig.noradId"
-                            control={form.control}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>NORAD ID</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            {...field}
-                                            onChange={e => field.onChange(parseInt(e.target.value))}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            name="tleConfig.classification"
-                            control={form.control}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Classification</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select classification" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="U">Unclassified</SelectItem>
-                                            <SelectItem value="C">Classified</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                </div>
 
                 <div className="flex justify-end space-x-4">
                     <Button type="button" variant="outline" onClick={onClose}>
