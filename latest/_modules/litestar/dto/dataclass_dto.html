@@ -15,8 +15,8 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
+  <!--
+    this give us a css class that will be invisible only if js is disabled
   -->
   <noscript>
     <style>
@@ -26,18 +26,18 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
@@ -297,9 +297,14 @@ window.addEventListener("load", () => mermaid.run());
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -346,22 +351,22 @@ window.addEventListener("load", () => mermaid.run());
                 <article class="bd-article">
                   
   <h1>Source code for litestar.dto.dataclass_dto</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">MISSING</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">replace</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">MISSING</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">replace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
 
-<span class="kn">from</span> <span class="nn">litestar.dto.base_dto</span> <span class="kn">import</span> <span class="n">AbstractDTO</span>
-<span class="kn">from</span> <span class="nn">litestar.dto.data_structures</span> <span class="kn">import</span> <span class="n">DTOFieldDefinition</span>
-<span class="kn">from</span> <span class="nn">litestar.dto.field</span> <span class="kn">import</span> <span class="n">extract_dto_field</span>
-<span class="kn">from</span> <span class="nn">litestar.params</span> <span class="kn">import</span> <span class="n">DependencyKwarg</span><span class="p">,</span> <span class="n">KwargDefinition</span>
-<span class="kn">from</span> <span class="nn">litestar.types.empty</span> <span class="kn">import</span> <span class="n">Empty</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.base_dto</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractDTO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.data_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTOFieldDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.dto.field</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_dto_field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.params</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyKwarg</span><span class="p">,</span> <span class="n">KwargDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">litestar.types.empty</span><span class="w"> </span><span class="kn">import</span> <span class="n">Empty</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Generator</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">Generator</span>
 
-    <span class="kn">from</span> <span class="nn">litestar.types.protocols</span> <span class="kn">import</span> <span class="n">DataclassProtocol</span>
-    <span class="kn">from</span> <span class="nn">litestar.typing</span> <span class="kn">import</span> <span class="n">FieldDefinition</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.types.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataclassProtocol</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">litestar.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldDefinition</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;DataclassDTO&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">)</span>
@@ -372,13 +377,13 @@ window.addEventListener("load", () => mermaid.run());
 
 <div class="viewcode-block" id="DataclassDTO">
 <a class="viewcode-back" href="../../../api/lib/dto.html#app.lib.dto.DataclassDTO">[docs]</a>
-<span class="k">class</span> <span class="nc">DataclassDTO</span><span class="p">(</span><span class="n">AbstractDTO</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataclassDTO</span><span class="p">(</span><span class="n">AbstractDTO</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Support for domain modelling with dataclasses.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DataclassDTO.generate_field_definitions">
 <a class="viewcode-back" href="../../../api/lib/dto.html#app.lib.dto.DataclassDTO.generate_field_definitions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">generate_field_definitions</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_field_definitions</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">DataclassProtocol</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">DTOFieldDefinition</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="n">dc_fields</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">model_type</span><span class="p">)}</span>
@@ -409,7 +414,7 @@ window.addEventListener("load", () => mermaid.run());
 <div class="viewcode-block" id="DataclassDTO.detect_nested_field">
 <a class="viewcode-back" href="../../../api/lib/dto.html#app.lib.dto.DataclassDTO.detect_nested_field">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect_nested_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_definition</span><span class="p">:</span> <span class="n">FieldDefinition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect_nested_field</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_definition</span><span class="p">:</span> <span class="n">FieldDefinition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field_definition</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s2">&quot;__dataclass_fields__&quot;</span><span class="p">)</span></div>
 </div>
 
@@ -442,8 +447,8 @@ window.addEventListener("load", () => mermaid.run());
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -476,7 +481,8 @@ window.addEventListener("load", () => mermaid.run());
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>
