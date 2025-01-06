@@ -33,17 +33,3 @@ class IpfOrbit(UUIDAuditBase):
 #         innerjoin=True,
 #         uselist=False,
 #     )
-
-
-# class TLE(UUIDAuditBase):
-#     __tablename__ = "tle"
-#     line1: Mapped[str]
-#     line2: Mapped[str]
-#     start: Mapped[datetime]
-#     end: Mapped[datetime]
-#     satellite_id: Mapped[UUID] = mapped_column(ForeignKey("satellite.id", ondelete="cascade"))
-#     satellite: Mapped[Satellite] = relationship(
-#         back_populates="orbits",
-#         innerjoin=True,
-#         uselist=False,
-#     )

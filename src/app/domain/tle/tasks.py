@@ -14,11 +14,11 @@ from app.lib.universe_assembler import uni_config
 logger = get_logger()
 
 
-class StateKep(model.geometry.StateConverter):
+class StateEqui(model.geometry.StateConverter):
     def __init__(self, uni: cosmos.Universe, satellite: str) -> None:
         super().__init__(
             "Cart",
-            "Kep",
+            "Equi",
             model.geometry.Vector6(uni.frames, "Earth", satellite, "ICRF"),
             {"gm": uni.bodies.get("Earth").gmProvider()},
         )
@@ -59,7 +59,7 @@ class TwoLineElement:
 
         # Convert to Keplerian elements
         pars = np.asarray(pars)
-        kep = pars[:6]
+        kep = astro.convert("Equi", "Kep", pars[:-1], {"mu": uni.constants.getMu("Earth")})
 
         # Set elements
         self.ecc = kep[1]
@@ -174,7 +174,7 @@ def fit_tle_from_orbit(orbit: IpfOrbit, step: float) -> tuple[tempo.Epoch, str, 
         fit_range = tempo.EpochRange(fit_start, fit_end)
         tle_epoch = fit_start
 
-        kep_state = StateKep(uni, ipf_point_name)
+        kep_state = StateEqui(uni, ipf_point_name)
         kep_state.eval(tle_epoch)
 
         logger.info(uni.constants.getMu("Earth"))
@@ -202,7 +202,7 @@ def fit_tle(
     initial_tle_variables: NDArray,
     obs_epochs: list,
     obs: NDArray,
-    max_iter: int = 10,
+    max_iter: int = 5,
     lm_damping_factor: float = 1e-3,
     coe_limit: bool = True,
 ) -> tuple[tempo.Epoch, str, str]:
@@ -241,18 +241,14 @@ def fit_tle(
                 earth_mu,
                 original_a,
             )
-            # logger.info("residuals %s", residuals)
-            # logger.info("jacobian %s", jacobian)
             at_w_a = np.zeros((7, 7))
             at_w_b = np.zeros(7)
 
             for i_epoch in range(len(residuals)):
                 at_w_a += jacobian[i_epoch].T @ w_scaled @ jacobian[i_epoch]
                 at_w_b += jacobian[i_epoch].T @ w_scaled @ (residuals[i_epoch] * b_scale)
-            # logger.info("at_w_a %s", at_w_a)
-            # logger.info("at_w_b %s", at_w_b)
+
             pseudo_inverse = np.linalg.pinv(at_w_a + lm_damping_factor * at_w_a, hermitian=True)
-            # logger.info("pseudo_inverse %s", pseudo_inverse)
             dx = pseudo_inverse @ at_w_b
 
             dx[0] *= earth_radius  # Rescale the first element
@@ -262,7 +258,7 @@ def fit_tle(
             res_old = np.sum(btwbs) / 2
 
             new_els = initial_coe + dx
-            new_els[1] = np.clip(new_els[1], 0, 1)  # Limit eccentricity
+
             new_els[6] = np.clip(new_els[6], -1, 1)  # Limit B*
 
             tle_new = TwoLineElement(uni, epoch=tle_epoch, pars=new_els, tle_config=tle_config)
@@ -275,7 +271,8 @@ def fit_tle(
                 inner_iteration += 1  # Increment inner iteration counter
                 if inner_iteration >= max_inner_iterations:  # Check if max iterations reached
                     logger.warning("Inner loop exceeded maximum iterations, raising MaxIterationsExceededError.")
-                    raise MaxIterationsExceededError("Maximum iterations exceeded during TLE fitting.")
+                    msg = "Maximum iterations exceeded during TLE fitting."
+                    raise MaxIterationsExceededError(msg)
                 continue
             lm_damping_factor = max(1e-3, lm_damping_factor / 10)
             break
@@ -285,6 +282,7 @@ def fit_tle(
             initial_coe[6] = np.clip(initial_coe[6], -1, 1)  # Limit B*
 
         logger.info("Updated parameters: %s", initial_coe)
+        logger.info("Residuals: %s", res_new)
     return tle_epoch, tle_new.to_line1(), tle_new.to_line2()
 
 

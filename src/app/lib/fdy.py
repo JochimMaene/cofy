@@ -15,7 +15,7 @@ def add_satellite_dynamics_to_config(uni_config: dict, dynamics: Dynamics, satel
 
 
 def get_dynamics_config(dynamics: Dynamics, satellite: Satellite) -> dict:
-    dynamics_config = {
+    dynamics_config: dict = {
         "bodies": [
             {
                 "name": "Earth",

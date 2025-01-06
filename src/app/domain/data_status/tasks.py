@@ -24,7 +24,7 @@ async def _update_data_file(
     file_id: int,
 ) -> None:
     """Common logic for updating a data file."""
-    current_time = datetime.now(UTC)
+
     response = await client.get(data_setting.URL)
 
     if response.status_code == HTTP_200_OK:
@@ -35,6 +35,7 @@ async def _update_data_file(
         if data_status:
             await logger.warning("File for %s couldn't be updated. Using old one.", data_setting.name)
 
+    current_time = datetime.now(UTC)
     next_update = croniter(data_setting.cron, current_time).get_next(datetime) if data_setting.cron else None
 
     updated_status = DataStatus(
