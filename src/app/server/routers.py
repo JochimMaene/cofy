@@ -17,6 +17,7 @@ from app.domain.tags.controllers import TagController
 from app.domain.teams.controllers import TeamController, TeamMemberController
 from app.domain.tle.controllers.tle_fitting import TleFitController
 from app.domain.tle.controllers.tles import TLEController
+from app.domain.util.controllers.state_conversion import ConversionController
 from app.domain.web.controllers import WebController
 
 if TYPE_CHECKING:
@@ -42,4 +43,5 @@ route_handlers: list[ControllerRouterHandler] = [
     OrbitController,
     TLEController,
     TleFitController,
+    ConversionController,
 ]

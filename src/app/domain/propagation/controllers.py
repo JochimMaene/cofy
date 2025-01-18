@@ -18,7 +18,12 @@ from app.config.app import alchemy
 from app.domain.accounts.guards import requires_active_user
 from app.domain.orbit.services import OrbitService
 from app.domain.propagation import urls
-from app.domain.propagation.schemas import JobRequest, PropagationInput, PropagationResult, return_propagation_template
+from app.domain.propagation.schemas import (
+    JobRequest,
+    PropagationInput,
+    PropagationResult,
+    return_propagation_template,
+)
 from app.domain.satellite.dependencies import provide_satellite_service
 from app.domain.satellite.services import SatelliteService
 from app.lib.exceptions import ApplicationClientError
@@ -106,7 +111,7 @@ class PropagationController(Controller):
               The result will be saved as a .ipf file.",
         guards=[requires_active_user],
         path=urls.PROPAGATION_REQUEST,
-        dto=MsgspecDTO[PropagationInput],
+        # dto=MsgspecDTO[],
         return_dto=MsgspecDTO[PropagationResult],
     )
     async def create_propagation_request(

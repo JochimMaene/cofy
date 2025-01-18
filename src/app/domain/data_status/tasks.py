@@ -25,7 +25,7 @@ async def _update_data_file(
 ) -> None:
     """Common logic for updating a data file."""
 
-    response = await client.get(data_setting.URL)
+    response = await client.get(data_setting.URL, timeout=30)
 
     if response.status_code == HTTP_200_OK:
         data_setting.update_func(response, data_setting.file_name)

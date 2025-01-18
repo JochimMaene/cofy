@@ -50,6 +50,7 @@ class Aocs(CamelizedBaseStruct):
 class Satellite(UUIDAuditBase):
     __tablename__ = "satellite"
     name: Mapped[str] = mapped_column(index=True)
+    is_active: Mapped[bool]  # tells if the satellite is active (orbiting, or not )
     group: Mapped[str] = mapped_column(index=True, nullable=True)
     dry_mass: Mapped[float]
     drag_area: Mapped[float]

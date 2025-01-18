@@ -31,7 +31,7 @@ Cofy only supports the Linux OS, as it is required to use GODOT. To quickly get 
 cp .env.local.example .env
 ```
 
-Open the `.env` file and set the `SPACE_CODEV_AUTH_TOKEN` variable to your personal GODOT access token. Next, generate the environment:
+Open the `.env` file and set the `UV_INDEX_SPACE_CODEV_PASSWORD` variable to your personal GODOT access token. Next, generate the environment:
 
 ```shell
 make install

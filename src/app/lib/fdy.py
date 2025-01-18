@@ -49,19 +49,32 @@ def get_dynamics_config(dynamics: Dynamics, satellite: Satellite) -> dict:
         ],
         "dynamics": [
             {"name": "gravity", "type": "SystemGravity", "config": {"model": "EarthCenter"}},
-            {
-                "name": "srp",
-                "type": "SimpleSRP",
-                "config": {
-                    "occulters": ["Earth"],
-                    "mass": 100,
-                    "area": satellite.srp_area,
-                    "cr": satellite.srp_coefficient,
-                },
-            },
             {"name": "combined", "type": "Combined", "config": ["gravity"]},
         ],
     }
+
+    if dynamics.drag:
+        dynamics_config["atmosphere"] = [
+            {
+                "name": "EarthAtmos",
+                "type": "nrlmsise00",
+                "config": {"point": "Earth", "axes": "ITRF", "file": "data/space_weather.ipf"},
+            },
+        ]
+        dynamics_config["dynamics"][-1]["config"].append("drag")
+        dynamics_config["dynamics"].insert(
+            0,
+            {
+                "name": "drag",
+                "type": "SimpleDrag",
+                "config": {
+                    "atmosphere": "EarthAtmos",
+                    "mass": satellite.dry_mass,  # TODO: add the wet mass
+                    "area": str(satellite.drag_area) + " m^2",
+                    "cd": satellite.drag_coefficient,
+                },
+            },
+        )
     if dynamics.third_body_sun:
         dynamics_config["gravity"][0]["bodies"].append("Sun")
     if dynamics.third_body_moon:
@@ -69,5 +82,27 @@ def get_dynamics_config(dynamics: Dynamics, satellite: Satellite) -> dict:
 
     if dynamics.solar_radiation_pressure:
         dynamics_config["dynamics"][-1]["config"].append("srp")
+        dynamics_config["dynamics"].insert(
+            0,
+            {
+                "name": "srp",
+                "type": "SimpleSRP",
+                "config": {
+                    "occulters": ["Earth"],
+                    "mass": satellite.dry_mass,  # TODO: add the wet mass
+                    "area": str(satellite.srp_area) + " m^2",
+                    "cr": satellite.srp_coefficient,
+                },
+            },
+        )
+
+    if dynamics.solid_tides:
+        dynamics_config["sphericalHarmonics"].append(
+            {
+                "name": "EarthSolidTides",
+                "type": "EarthTides",
+                "config": {"base": "EarthSphericalHarmonics", "solidTides": "data/solid_tides.tab"},
+            },
+        )
 
     return dynamics_config
