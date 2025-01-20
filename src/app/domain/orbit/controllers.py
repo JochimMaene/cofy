@@ -11,7 +11,7 @@ from app.domain.orbit import urls
 from app.domain.orbit.dependencies import provide_orbit_service
 from app.domain.orbit.dtos import OrbitCreateDTO, OrbitDTO, OrbitUpdateDTO
 from app.domain.orbit.services import OrbitService
-from app.lib.dependencies import provide_file_storage_service
+from app.lib.deps import provide_file_storage_service
 from app.lib.storage_service import FileStorageService
 
 if TYPE_CHECKING:

@@ -13,7 +13,7 @@ classifiers = [
 ]
 dependencies = [
   "litestar[jinja,jwt,redis,structlog]>=2.8.3",
-  "advanced-alchemy[uuid]>=0.10.0",
+  "advanced-alchemy[uuid]>=0.29.0",
   "python-dotenv>=1.0.0",
   "passlib[argon2]>=1.7.4",
   "litestar-saq>=0.1.3",

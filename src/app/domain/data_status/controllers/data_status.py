@@ -1,25 +1,32 @@
 from collections.abc import Sequence
 
+from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar import Controller, get, patch
-from litestar.di import Provide
 from litestar.dto import DTOData
 
-from app.db.models.data_status import DataStatus
+from app.db.models import DataStatus
 from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.data_status import urls
-from app.domain.data_status.dependencies import provide_data_status_service
-from app.domain.data_status.dtos import DataStatusDTO, DataStatusUpdateDTO
 from app.domain.data_status.services import DataStatusService
+from app.lib import dto
+from app.lib.deps import create_service_provider
 
 __all__ = ["DataStatusController"]
+
+class DataStatusDTO(SQLAlchemyDTO[DataStatus]):
+    config = dto.config(exclude={"created_at", "updated_at"})
+
+
+class DataStatusUpdateDTO(SQLAlchemyDTO[DataStatus]):
+    config = dto.config(exclude={"id", "created_at", "updated_at"}, partial=True)
 
 
 class DataStatusController(Controller):
     """Handles the interactions within the Tag objects."""
 
     guards = [requires_active_user]
-    dependencies = {"data_status_service": Provide(provide_data_status_service)}
-    signature_namespace = {"DataStatusService": DataStatusService, "DataStatus": DataStatus}
+    dependencies = {"data_status_service": create_service_provider(DataStatusService)}
+    signature_types = [DataStatusService]
     tags = ["Environment Files"]
     return_dto = DataStatusDTO
 

@@ -51,6 +51,8 @@ make stop-infra
 
 ### Docker
 
+If you want to run the entire development environment containerized, you can run the following:
+
 ```bash
 docker compose up
 ```
@@ -105,6 +107,8 @@ Loading environment configuration from .env
 
 Alembic integration is built directly into the CLI under the `database` command.
 
+The following shows the commands available with the `database` CLI command.
+
 ```bash
 ❯ app database
 Using Litestar app from env: 'app.asgi:create_app'
@@ -130,6 +134,7 @@ Using Litestar app from env: 'app.asgi:create_app'
 ```
 
 ### Upgrading the Database
+To upgrade the database to the latest revision, you can use the following command:
 
 ```bash
 ❯ app database upgrade
@@ -147,6 +152,7 @@ Are you sure you you want migrate the database to the "head" revision? [y/n]: y
 ```
 
 ## Worker Commands
+The following shows the commands available with the `worker` CLI command. This controls the `saq` worker processes. However, when using the `SAQ_USE_SERVER_LIFESPAN=True` environment variable, the background workers are automatically started and stopped with the Litestar HTTP server.
 
 ```bash
 ❯ app worker

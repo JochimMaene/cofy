@@ -68,10 +68,10 @@ saq = SAQConfig(
                 ),
             ],
         ),
-        QueueConfig(
-            name="Orbit propagation queue",
-            tasks=["app.domain.propagation.controllers.propagate_and_save"],
-        ),
+        # QueueConfig(
+        #     name="Orbit propagation queue",
+        #     tasks=["app.domain.propagation.controllers.propagate_and_save"],
+        # ),
     ],
 )
 
@@ -81,16 +81,6 @@ log = StructlogConfig(
         standard_lib_logging_config=LoggingConfig(
             root={"level": logging.getLevelName(settings.log.LEVEL), "handlers": ["queue_listener"]},
             loggers={
-                "uvicorn.access": {
-                    "propagate": False,
-                    "level": settings.log.UVICORN_ACCESS_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
-                "uvicorn.error": {
-                    "propagate": False,
-                    "level": settings.log.UVICORN_ERROR_LEVEL,
-                    "handlers": ["queue_listener"],
-                },
                 "granian.access": {
                     "propagate": False,
                     "level": settings.log.GRANIAN_ACCESS_LEVEL,

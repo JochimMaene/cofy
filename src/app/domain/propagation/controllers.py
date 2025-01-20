@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from tempfile import NamedTemporaryFile
 from typing import Any
 from uuid import UUID, uuid4
@@ -34,8 +34,8 @@ from app.lib.universe_assembler import uni_config as uni_basic
 logger = get_logger()
 
 
-def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime.datetime:
-    return datetime.datetime.fromisoformat(godot_epoch.calStr("UTC")[:-4] + "Z")
+def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime:
+    return datetime.fromisoformat(godot_epoch.calStr("UTC")[:-4] + "Z")
 
 
 # simple file data store for now

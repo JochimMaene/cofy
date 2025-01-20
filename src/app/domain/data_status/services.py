@@ -1,13 +1,19 @@
 from __future__ import annotations
 
+from advanced_alchemy.repository import SQLAlchemyAsyncRepository
 from advanced_alchemy.service import SQLAlchemyAsyncRepositoryService
 
-from app.db.models import DataStatus
+from app.db import models as m
 
-from .repositories import DataStatusRepository
+__all__ = ("DataStatusService",)
 
-__all__ = ("DataStatusRepository",)
+class DataStatusService(SQLAlchemyAsyncRepositoryService[m.DataStatus]):
+    """Handles basic lookup operations for an Data Status."""
 
+    class Repository(SQLAlchemyAsyncRepository[m.DataStatus]):
+        """Data Status Repository."""
 
-class DataStatusService(SQLAlchemyAsyncRepositoryService[DataStatus]):
-    repository_type = DataStatusRepository
+        model_type = m.DataStatus
+
+    repository_type = Repository
+    match_fields = ["name"]

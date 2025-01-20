@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from godot.core.tempo import Epoch
 from litestar import post
@@ -18,8 +18,8 @@ from app.domain.tle.services import TLEService
 from app.domain.tle.tasks import fit_tle_from_orbit
 
 
-def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime.datetime:
-    return datetime.datetime.fromisoformat(godot_epoch.calStr("UTC")[:-4] + "Z")
+def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime:
+    return datetime.fromisoformat(godot_epoch.calStr("UTC")[:-4] + "Z")
 
 
 class TleFitController(Controller):

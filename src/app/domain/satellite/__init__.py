@@ -1,4 +1,3 @@
-from app.db.models import satellite
-from app.domain.satellite import controllers
+from . import controllers, services, urls
 
-__all__ = ["satellite", "controllers"]
+__all__ = ["controllers", "services", "urls"]

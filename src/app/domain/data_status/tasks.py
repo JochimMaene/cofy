@@ -9,9 +9,9 @@ from structlog import get_logger
 
 from app.config.app import alchemy
 from app.db.models.data_status import DataStatus, StatusType
-from app.domain.data_status.dependencies import provide_data_status_service
 from app.domain.data_status.services import DataStatusService
 from app.domain.data_status.settings import ENVIRONMENT_DATA_SETTINGS, EnvironementDataUpdateSettings
+from app.lib.deps import create_service_provider
 
 logger = get_logger()
 
@@ -55,11 +55,12 @@ async def _update_data_file(
 
 
 async def update_environment_files_status(_: Context) -> None:
+    
     await logger.ainfo("Checking environment files status.")
     client = httpx.AsyncClient(verify=False)
-
     try:
         async with alchemy.get_session() as db_session:
+            provide_data_status_service = create_service_provider(DataStatusService)
             service = await anext(provide_data_status_service(db_session))
 
             update_tasks = []
@@ -68,7 +69,7 @@ async def update_environment_files_status(_: Context) -> None:
                 if not data_status or (data_status.cron and datetime.now(UTC) > data_status.next_update):
                     await logger.ainfo(f"Queuing {data_setting.name} file update.")
                     update_tasks.append(_update_data_file(data_setting, data_status, service, client, key))
-
+            
             if update_tasks:
                 await asyncio.gather(*update_tasks)
     finally:
@@ -81,6 +82,7 @@ async def update_specific_file(file_id: int) -> None:
 
     try:
         async with alchemy.get_session() as db_session:
+            provide_data_status_service = create_service_provider(DataStatusService)
             service = await anext(provide_data_status_service(db_session))
             data_status = await service.get(file_id)
 

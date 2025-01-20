@@ -1,6 +1,3 @@
-"""User Account domain logic."""
+from . import controllers, services, urls
 
-from app.db.models import dynamics
-from app.domain.dynamics import controllers
-
-__all__ = ["dynamics", "controllers"]
+__all__ = ["controllers", "services", "urls"]
