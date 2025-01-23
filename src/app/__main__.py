@@ -31,17 +31,9 @@ def run_cli() -> NoReturn:
     """
     setup_environment()
 
-    try:
-        from litestar.cli.main import litestar_group
+    from litestar.cli.main import litestar_group
 
-        sys.exit(litestar_group())
-    except ImportError as exc:
-        print(  # noqa: T201
-            "Could not load required libraries. ",
-            "Please check your installation and make sure you activated any necessary virtual environment",
-        )
-        print(exc)  # noqa: T201
-        sys.exit(1)
+    sys.exit(litestar_group())
 
 
 if __name__ == "__main__":

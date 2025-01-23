@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import datetime
+from datetime import datetime
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
-DTorNone = datetime.datetime | None
+DTorNone = datetime | None
 StringOrNone = str | None
 UuidOrNone = UUID | None
 BooleanOrNone = bool | None

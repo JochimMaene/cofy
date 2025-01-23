@@ -13,10 +13,4 @@ def create_app() -> Litestar:
 
     from app.server.core import ApplicationCore
 
-
-    try:
-    # Code that should raise an error
-        return Litestar(plugins=[ApplicationCore()])
-    except AttributeError as e:
-        print(f"Error raised: {e}")
-        return
+    return Litestar(plugins=[ApplicationCore()])
