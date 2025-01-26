@@ -3,14 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Annotated
 
 from litestar import Controller, delete, get
-from litestar.di import Provide
+
 
 from app.db.models import TLE
 from app.domain.accounts.guards import requires_active_user, requires_superuser
 from app.domain.tle import urls
-from app.domain.tle.dependencies import provide_tle_service
 from app.domain.tle.dtos import TLEDTO
 from app.domain.tle.services import TLEService
+from app.lib.deps import create_service_provider
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -25,7 +25,7 @@ class TLEController(Controller):
 
     guards = [requires_active_user]
     dependencies = {
-        "tle_service": Provide(provide_tle_service),
+        "tle_service": create_service_provider(TLEService),
     }
     signature_namespace = {"TLEService": TLEService, "TLE": TLE}
     tle = ["TLE"]

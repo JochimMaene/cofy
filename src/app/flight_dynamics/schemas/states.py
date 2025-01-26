@@ -42,17 +42,3 @@ class StateType(str, Enum):
 
 
 AnyState = StateCart | StateKep | StateCirc
-
-
-class TimeScale(str, Enum):
-    UTC = "UTC"
-    """"Coordinated Universal Time"""
-
-    TT = "TT"
-    """Terrestrial Time"""
-
-    TAI = "TAI"
-    """International Atomic Time"""
-
-    GPS = "GPS"
-    """GPS Time"""

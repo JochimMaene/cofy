@@ -68,19 +68,24 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
         from app.domain.accounts.deps import provide_user
         from app.domain.accounts.guards import auth as jwt_auth
         from app.domain.accounts.services import RoleService, UserService
+        from app.domain.data_status.controllers.data_status import DataStatusController
+        from app.domain.data_status.controllers.data_update import DataUpdateController
+        from app.domain.dynamics.controllers import DynamicsController
+        from app.domain.ground_station.controllers import GroundStationController
+        from app.domain.orbit.controllers import OrbitController
+        from app.domain.propagation.controllers import PropagationController
+        from app.domain.satellite.controllers import SatelliteController
         from app.domain.system.controllers import SystemController
         from app.domain.tags.controllers import TagController
         from app.domain.teams import signals as team_signals
         from app.domain.teams.controllers import TeamController, TeamMemberController
         from app.domain.teams.services import TeamMemberService, TeamService
+        from app.domain.tle.controllers.tle_fitting import TleFitController
+        from app.domain.tle.controllers.tles import TLEController
+        from app.domain.util.controllers.util import ConversionController
         from app.domain.web.controllers import WebController
         from app.lib.exceptions import ApplicationError, exception_to_http_response
-        from app.domain.data_status.controllers.data_status import DataStatusController
-        from app.domain.data_status.controllers.data_update import DataUpdateController
         from app.server import plugins
-        from app.domain.ground_station.controllers import GroundStationController
-        # from app.domain.dynamics.controllers import DynamicsController
-        from app.domain.tle.controllers.tle_fitting import TleFitController
 
         settings = get_settings()
         self.redis = settings.redis.get_client()
@@ -127,6 +132,12 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
                 DataStatusController,
                 GroundStationController,
                 TleFitController,
+                DynamicsController,
+                OrbitController,
+                PropagationController,
+                SatelliteController,
+                TLEController,
+                ConversionController,
             ],
         )
         # signatures

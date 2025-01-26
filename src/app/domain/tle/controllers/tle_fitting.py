@@ -11,11 +11,12 @@ from app.domain.accounts.guards import requires_active_user
 from app.domain.orbit.dependencies import provide_orbit_service
 from app.domain.orbit.services import OrbitService
 from app.domain.tle import urls
-from app.domain.tle.dependencies import provide_tle_service
 from app.domain.tle.dtos import TLEDTO
 from app.domain.tle.schemas import TleGenerationFromOrbitInput
 from app.domain.tle.services import TLEService
 from app.domain.tle.tasks import fit_tle_from_orbit
+
+from app.lib.deps import create_service_provider
 
 
 def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime:
@@ -24,7 +25,7 @@ def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime:
 
 class TleFitController(Controller):
     dependencies = {
-        "tle_service": Provide(provide_tle_service),
+        "tle_service": create_service_provider(TLEService),
         "orbit_service": Provide(provide_orbit_service),
     }
     tags = ["TLE"]

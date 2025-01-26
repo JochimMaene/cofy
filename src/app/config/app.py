@@ -51,7 +51,7 @@ vite = ViteConfig(
     host=settings.vite.HOST,
 )
 saq = SAQConfig(
-    redis=settings.redis.client,
+    dsn=settings.redis.URL,
     web_enabled=settings.saq.WEB_ENABLED,
     worker_processes=settings.saq.PROCESSES,
     use_server_lifespan=settings.saq.USE_SERVER_LIFESPAN,

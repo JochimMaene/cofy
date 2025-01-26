@@ -26,6 +26,10 @@ const navItems = [
     title: "Orbits",
     href: "/orbits",
   },
+  {
+    title: "Utils",
+    href: "/utils",
+  }
 ]
 
 export function MainNav({
