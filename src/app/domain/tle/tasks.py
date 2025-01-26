@@ -60,13 +60,13 @@ class TwoLineElement:
         # Convert to Keplerian elements
         pars = np.asarray(pars)
         kep = astro.convert("Equi", "Kep", pars[:-1], {"mu": uni.constants.getMu("Earth")})
-
+        kep[1] = np.clip(kep[1], 0, 1)
         # Set elements
         self.ecc = kep[1]
         self.inc = kep[2]
         self.raan = num.wrapZero2Pi(kep[3])
         self.aop = num.wrapZero2Pi(kep[4])
-        self.mean_anomaly = num.wrapZero2Pi(astro.meanFromTrue(kep[5], self.ecc))
+        self.mean_anomaly = num.wrapZero2Pi(astro.meanFromTrue(kep[5], max(0, self.ecc)))
 
         # Compute mean motion (revs per day)
         self.mean_motion = 0.5 * tempo.SecondsInDay / math.pi * math.sqrt(uni.constants.getMu("Earth") / (kep[0] ** 3))

@@ -1,18 +1,25 @@
+from advanced_alchemy.extensions.litestar.dto import SQLAlchemyDTO
 from litestar import Controller, post
-from litestar.di import Provide
 from litestar.response import Response
 from litestar.status_codes import HTTP_202_ACCEPTED
 
+from app.db.models import DataStatus
 from app.domain.accounts.guards import requires_superuser
 from app.domain.data_status import urls
-from app.domain.data_status.dependencies import provide_data_status_service
+from app.domain.data_status.services import DataStatusService
 from app.domain.data_status.tasks import update_specific_file
+from app.lib import dto
+from app.lib.deps import create_service_provider
+
+
+class DataStatusCreateDTO(SQLAlchemyDTO[DataStatus]):
+    config = dto.config(exclude={"id", "created_at", "updated_at"})
 
 
 class DataUpdateController(Controller):
     """Controller for manual data updates."""
 
-    dependencies = {"data_status_service": Provide(provide_data_status_service)}
+    dependencies = {"data_status_service": create_service_provider(DataStatusService)}
     tags = ["Environment Files"]
 
     @post(

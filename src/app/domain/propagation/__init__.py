@@ -1,3 +1,3 @@
-from app.domain.propagation import controllers, schemas
+from . import controllers, urls
 
-__all__ = ["controllers", "schemas"]
+__all__ = ["controllers", "urls"]

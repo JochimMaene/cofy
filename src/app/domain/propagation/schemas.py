@@ -3,37 +3,10 @@ from uuid import UUID
 
 from msgspec import Meta
 
+from app.flight_dynamics.schemas.states import StateCart, StateCirc, StateKep
 from app.lib.schema import CamelizedBaseStruct
 
-
-class StateCart(CamelizedBaseStruct, tag="state-cart"):
-    pos_x: Annotated[str, Meta(description="Position vector X component.", examples=["150.5 km"])]
-    pos_y: Annotated[str, Meta(description="Position vector Y component.", examples=["150.5 km"])]
-    pos_z: Annotated[str, Meta(description="Position vector Z component.", examples=["150.5 km"])]
-    vel_x: Annotated[str, Meta(description="Velocity vector X component.", examples=["3.6 km/s", "514 m/s"])]
-    vel_y: Annotated[str, Meta(description="Velocity vector Y component.", examples=["3.6 km/s", "514 m/s"])]
-    vel_z: Annotated[str, Meta(description="Velocity vector Z component.", examples=["3.6 km/s", "514 m/s"])]
-
-
-class StateKep(CamelizedBaseStruct, tag="state-kep"):
-    sma: Annotated[str, Meta(description="Semi-major axis", examples=["42165 km"])]
-    ecc: Annotated[float, Meta(description="Eccentricity", examples=["0.01"])]
-    inc: Annotated[str, Meta(description="Inclination", examples=["70 deg"])]
-    ran: Annotated[str, Meta(description="Right-ascension of the ascending node", examples=["32.9 deg"])]
-    aop: Annotated[str, Meta(description="Argument of pericentre", examples=["32.9 deg"])]
-    tan: Annotated[str, Meta(description="True anomaly", examples=["-37.3 deg"])]
-
-
-class StateCirc(CamelizedBaseStruct, tag="state-circ"):
-    sma: Annotated[str, Meta(description="Semi-major axis.", examples=["7500 km"])]
-    ecx: float
-    ecy: float
-    inc: str
-    ran: str
-    aol: str
-
-
-UnionType = StateKep
+UnionType = StateCart | StateKep | StateCirc
 
 
 class JobRequest(CamelizedBaseStruct):

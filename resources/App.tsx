@@ -19,6 +19,7 @@ import { UserNav } from "@/components/user-nav"
 import { Outlet } from "react-router-dom"
 import GroundStationPage from "@/pages/ground-station/GroundStation"
 import OrbitPage from "@/pages/orbit/Orbit"
+import UtilPage from "@/pages/utilities/Utilities"
 
 const App: React.FC = () => {
   const navigate = useNavigate()
@@ -57,6 +58,7 @@ const App: React.FC = () => {
             <Route path="satellites" element={<SatellitesPage />} />
             <Route path="ground-stations" element={<GroundStationPage />} />
             <Route path="orbits" element={<OrbitPage />} />
+            <Route path="utils" element={<UtilPage />} />
           </Route>
         </Route>
 

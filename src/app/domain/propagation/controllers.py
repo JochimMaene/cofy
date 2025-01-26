@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from tempfile import NamedTemporaryFile
 from typing import Any
 from uuid import UUID, uuid4
@@ -18,7 +18,12 @@ from app.config.app import alchemy
 from app.domain.accounts.guards import requires_active_user
 from app.domain.orbit.services import OrbitService
 from app.domain.propagation import urls
-from app.domain.propagation.schemas import JobRequest, PropagationInput, PropagationResult, return_propagation_template
+from app.domain.propagation.schemas import (
+    JobRequest,
+    PropagationInput,
+    PropagationResult,
+    return_propagation_template,
+)
 from app.domain.satellite.dependencies import provide_satellite_service
 from app.domain.satellite.services import SatelliteService
 from app.lib.exceptions import ApplicationClientError
@@ -29,8 +34,8 @@ from app.lib.universe_assembler import uni_config as uni_basic
 logger = get_logger()
 
 
-def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime.datetime:
-    return datetime.datetime.fromisoformat(godot_epoch.calStr("UTC")[:-4] + "Z")
+def convert_godot_epoch_to_datetime(godot_epoch: Epoch) -> datetime:
+    return datetime.fromisoformat(godot_epoch.calStr("UTC")[:-4] + "Z")
 
 
 # simple file data store for now
@@ -106,7 +111,7 @@ class PropagationController(Controller):
               The result will be saved as a .ipf file.",
         guards=[requires_active_user],
         path=urls.PROPAGATION_REQUEST,
-        dto=MsgspecDTO[PropagationInput],
+        # dto=MsgspecDTO[],
         return_dto=MsgspecDTO[PropagationResult],
     )
     async def create_propagation_request(
