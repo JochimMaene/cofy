@@ -3,13 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StateConversionForm } from "./components/state-conversion-form";
 import { TimeConversionForm } from "./components/time-conversion-form";
+import { FrameConversionForm } from "./components/frame-conversion-form";
 
 export default function UtilitiesPage() {
   return (
     <MainLayout
       title="Utilities"
       description="Various orbital mechanics and mission analysis tools"
-      keywords="Utilities, Tools, State Conversion, Time Conversion"
+      keywords="Utilities, Tools, State Conversion, Time Conversion, Frame Conversion"
     >
       <div className="container mx-auto py-8 space-y-8">
         <div className="flex justify-between items-center">
@@ -20,7 +21,7 @@ export default function UtilitiesPage() {
           <TabsList>
             <TabsTrigger value="state-conversion">State Conversion</TabsTrigger>
             <TabsTrigger value="time-conversion">Time Conversion</TabsTrigger>
-            {/* Add more TabsTriggers for future utilities */}
+            <TabsTrigger value="frame-conversion">Frame Conversion</TabsTrigger>
           </TabsList>
 
           <TabsContent value="state-conversion">
@@ -45,7 +46,16 @@ export default function UtilitiesPage() {
             </Card>
           </TabsContent>
 
-          {/* Add more TabsContent sections for future utilities */}
+          <TabsContent value="frame-conversion">
+            <Card>
+              <CardHeader>
+                <CardTitle>Frame Conversion</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FrameConversionForm />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </MainLayout>

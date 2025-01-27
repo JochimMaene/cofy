@@ -20,7 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import React from "react";
+import { convertState } from "@/services/state-conversion";
+import { StateType } from "@/types/state-conversion";
 
 const stateTypes = ["Cart", "Kep", "Circ"] as const;
 
@@ -59,8 +60,8 @@ const formSchema = z.object({
 
 export function StateConversionForm() {
   const [result, setResult] = useState<number[] | null>(null);
-  const [selectedFromType, setSelectedFromType] = useState<keyof typeof stateFields>("Cart");
-  const [selectedToType, setSelectedToType] = useState<keyof typeof stateFields>("Kep");
+  const [selectedFromType, setSelectedFromType] = useState<StateType>("Cart");
+  const [selectedToType, setSelectedToType] = useState<StateType>("Kep");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,27 +74,20 @@ export function StateConversionForm() {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      const response = await fetch("/api/util/state-convert", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fromState: data.fromState,
-          toState: data.toState,
-          state: data.stateValues,
-        }),
+      const result = await convertState({
+        fromState: data.fromState,
+        toState: data.toState,
+        state: data.stateValues,
       });
-
-      if (!response.ok) {
-        throw new Error("Conversion failed");
+      if (!result.state || result.state.some(value => value === null || !Number.isFinite(value))) {
+        throw new Error("Invalid conversion result: received invalid values");
       }
-
-      const result = await response.json();
       setResult(result.state);
       toast.success("State converted successfully");
     } catch (error) {
-      toast.error("Failed to convert state");
+      console.error("Conversion error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to convert state");
+      setResult(null); // Reset result on error
     }
   };
 
@@ -109,7 +103,7 @@ export function StateConversionForm() {
                 <FormItem>
                   <FormLabel>From State Type</FormLabel>
                   <Select
-                    onValueChange={(value: keyof typeof stateFields) => {
+                    onValueChange={(value: StateType) => {
                       field.onChange(value);
                       setSelectedFromType(value);
                     }}
@@ -140,7 +134,7 @@ export function StateConversionForm() {
                 <FormItem>
                   <FormLabel>To State Type</FormLabel>
                   <Select
-                    onValueChange={(value: keyof typeof stateFields) => {
+                    onValueChange={(value: StateType) => {
                       field.onChange(value);
                       setSelectedToType(value);
                     }}
@@ -165,28 +159,60 @@ export function StateConversionForm() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {stateFields[selectedFromType].map((field, index) => (
-              <FormField
-                key={field.name}
-                control={form.control}
-                name={`stateValues.${index}`}
-                render={({ field: formField }) => (
-                  <FormItem>
-                    <FormLabel>{field.label}</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="any"
-                        {...formField}
-                        onChange={(e) => formField.onChange(parseFloat(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">ICRF Position (km)</label>
+              <div className="grid grid-cols-3 gap-4">
+                {stateFields[selectedFromType].slice(0, 3).map((field, index) => (
+                  <FormField
+                    key={field.name}
+                    control={form.control}
+                    name={`stateValues.${index}`}
+                    render={({ field: formField }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">{field.label.split(' ')[1]}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step="any"
+                            {...formField}
+                            onChange={(e) => formField.onChange(parseFloat(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">ICRF Velocity (km/s)</label>
+              <div className="grid grid-cols-3 gap-4">
+                {stateFields[selectedFromType].slice(3, 6).map((field, index) => (
+                  <FormField
+                    key={field.name}
+                    control={form.control}
+                    name={`stateValues.${index + 3}`}
+                    render={({ field: formField }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">{field.label.split(' ')[1]}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step="any"
+                            {...formField}
+                            onChange={(e) => formField.onChange(parseFloat(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
           <Button type="submit">Convert State</Button>
@@ -196,13 +222,27 @@ export function StateConversionForm() {
       {result && (
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Conversion Result</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {stateFields[selectedToType].map((field, index) => (
-              <div key={field.name} className="space-y-1">
-                <label className="text-sm font-medium">{field.label}</label>
-                <div className="text-sm">{result[index].toFixed(6)}</div>
-              </div>
-            ))}
+          <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              {stateFields[selectedToType].map((field, index) => (
+                <div key={field.name} className="space-y-1">
+                  <label className="text-sm font-medium">{field.label}</label>
+                  <div className="text-sm font-mono bg-muted p-2 rounded-md">
+                    {result[index].toString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                const text = `[${result.map(v => v.toString()).join(", ")}]`;
+                navigator.clipboard.writeText(text);
+                toast.success("Copied to clipboard");
+              }}
+            >
+              Copy Output To Clipboard
+            </Button>
           </div>
         </div>
       )}

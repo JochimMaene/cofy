@@ -4,6 +4,7 @@ from msgspec import Meta
 
 from app.flight_dynamics.schemas.states import  StateType
 from app.flight_dynamics.schemas.time import TimeScale, Epoch
+from app.flight_dynamics.schemas.frame import FrameType
 from app.lib.schema import CamelizedBaseStruct
 
 
@@ -37,4 +38,8 @@ class TimeScaleConversionOutput(CamelizedBaseStruct):
 class FrameConversionInput(CamelizedBaseStruct):
     epoch: Epoch
     state: Annotated[list[float], Meta(min_length=6, max_length=6)]
-    
+    from_frame: FrameType
+    to_frame: FrameType
+
+class FrameConversionOutput(CamelizedBaseStruct):
+    state: Annotated[list[float], Meta(min_length=6, max_length=6)]

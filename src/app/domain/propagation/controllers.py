@@ -29,7 +29,7 @@ from app.domain.satellite.services import SatelliteService
 from app.lib.exceptions import ApplicationClientError
 from app.lib.fdy import get_dynamics_config
 from app.lib.storage_service import FileStorageService
-from app.lib.universe_assembler import uni_config as uni_basic
+from app.flight_dynamics.schemas.assembler.universe import uni_config as uni_basic
 
 logger = get_logger()
 

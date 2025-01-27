@@ -9,7 +9,7 @@ from structlog import get_logger
 
 from app.db.models import IpfOrbit
 from app.lib.exceptions import MaxIterationsExceededError
-from app.lib.universe_assembler import uni_config
+from app.flight_dynamics.schemas.assembler.universe import uni_config
 
 logger = get_logger()
 

@@ -1,3 +1,4 @@
+import { api } from "@/lib/axios";
 import { StateConversionInput, StateConversionOutput, StateType } from "@/types/state-conversion";
 
 const DEG_TO_RAD = Math.PI / 180;
@@ -26,27 +27,18 @@ export async function convertState(data: StateConversionInput): Promise<StateCon
   // Convert angles from degrees to radians before sending to API
   const radiansState = convertToRadians(data.fromState, data.state);
 
-  const response = await fetch("/api/util/state-convert", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from_state: data.fromState,
-      to_state: data.toState,
-      state: radiansState,
-    }),
+  const response = await api.post<StateConversionOutput>("/api/util/state-convert", {
+    from_state: data.fromState,
+    to_state: data.toState,
+    state: radiansState,
   });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.message || "Failed to convert state");
+  
+  if (!response.data.state || response.data.state.some(value => value === null || !Number.isFinite(value))) {
+    throw new Error("Invalid conversion result: received invalid or null values");
   }
-
-  const result = await response.json();
   
   // Convert angles back to degrees for display
   return {
-    state: convertToDegrees(data.toState, result.state)
+    state: convertToDegrees(data.toState, response.data.state)
   };
 } 
